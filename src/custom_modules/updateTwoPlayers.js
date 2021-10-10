@@ -36,7 +36,9 @@ const updateTwoPlayers = async (message, fighter1, fighter2, servant1, servant2,
                 // await server.updateOne()
                 
             } else {
-
+                if (servant1.passive[0] == "Treasury of Babylon" || servant1.passive[0] == "Golden Rule") {
+                    money1 = money1 * 2
+                }
                 // updatedMoney = player.money + money
                 player1.money += money1
                 player1.exp += exp1
@@ -89,7 +91,9 @@ const updateTwoPlayers = async (message, fighter1, fighter2, servant1, servant2,
                 // await server.updateOne()
                 
             } else {
-
+                if (servant2.passive[0] == "Treasury of Babylon" || servant2.passive[0] == "Golden Rule") {
+                    money2 = money2 * 2
+                }
                 // updatedMoney = player.money + money
                 player2.money += money2
                 player2.exp += exp2

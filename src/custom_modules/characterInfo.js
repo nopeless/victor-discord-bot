@@ -1,15 +1,11 @@
 const Server = require("../models/Server");
 const { MessageEmbed } = require('discord.js');
 const characters = require("../charactersList");
+const getUser = require("./getUser")
 
-
-const characterInfo = (message) => {
-    Server.findOne({ serverID: message.guild.id }, async (err, server) => {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            let user = await server.players[server.playersMap.get(message.author.id)];
+const characterInfo = async (message) => {
+    let data = await getUser(message);
+    let [playersMap, user] = [data[0].playersMap, data[0].players[0]]
             if (user && user !== undefined){
                 if (user.servants.length != 0) {
                     const ID = user.servants[0].id
@@ -27,6 +23,7 @@ const characterInfo = (message) => {
                         .setThumbnail(characters[ID].pictures[0])
                         .addField(`Exp:`, `${user.servants[0].exp}/${Math.floor(user.servants[0].level ** 1.5 * 100)}`)
                         .addField(`Alignment:`, alignment)
+                        .addField(`Passive:`, `${characters[ID].passive[0]} - ${characters[ID].passive[1]}`)
                         .addField(`Noble Phantasm:`, `${characters[ID].noblePhantasm.name} (Lvl.${user.servants[0].NPLevel})`)
                         .addField('Description', `${characters[ID].noblePhantasm.description}`)
                         .addField('Stats Points to distribute:', `${user.servants[0].statsPoints}`, false)
@@ -41,7 +38,5 @@ const characterInfo = (message) => {
             } else { message.channel.send('You need to register first, please use the f/register command to do that.')}
             
         }
-    })
-}
 
 module.exports = characterInfo;

@@ -14,6 +14,7 @@ const mobNp = require('../mobsSpecials');
 const prefix = auth.prefix;
 const backgrounds = require('../../backgrounds');
 const showCurrentStats = require('../servantFight/showCurrentStats');
+const abilityCheck = require('../abilityCheck');
 
 // 1. take player1 data from the db and send ping to P2 to join
 // 2. create battlefield(Object?) and add P1 and S1
@@ -24,6 +25,7 @@ const showCurrentStats = require('../servantFight/showCurrentStats');
 const playerTurn = async (message, battlefield, first, second) => {
     //battle start
     await renderBattle(message, first, second, battlefield.background, true)
+    message.channel.send(`Turn ${Math.floor(battlefield.turn)}`)
     // message.channel.send(`${battlefield.servant1.name[0]} hp: ${battlefield.servant1.currentHp}/${battlefield.servant1.maxHp}\nStats:${battlefield.servant1.stats}\nStatus:${battlefield.servant1.status}\ntakenDMG:${battlefield.servant1.takenDmg}`)
     // message.channel.send(`${battlefield.servant2.name[0]} hp: ${battlefield.servant2.currentHp}/${battlefield.servant2.maxHp}\nStats:${battlefield.servant2.stats}\nStatus:${battlefield.servant2.status}\ntakenDMG:${battlefield.servant2.takenDmg}`)
 
@@ -75,19 +77,28 @@ const playerTurn = async (message, battlefield, first, second) => {
                     if (first.status.confusion.active === true) {
                         let confuse = Math.floor(Math.random() * 2);
                         if (confuse === 0) {
-                            second.takeAttackDammage = [first.inflictDammage, message, false]
+                            let dmg = second.takeAttackDammage([first.inflictDammage, message, false])
+                            message.channel.send(`Dealt ${dmg} damage`)
+                            if (first.passive[0] == "Sadist") {
+                                first.buffStrength(dmg * 0.15)
+                            }
                             collector1.stop('attack')
                             break;
                         } else {
                             // confusion triggers servant hits themselves
-                            first.takeAttackDammage = [first.inflictDammage, message, false]
+                            let dmg = first.takeAttackDammage([first.inflictDammage, message, false])
+                            message.channel.send(`Dealt ${dmg} damage`)
                             message.channel.send(`${firstName} got hurt in their confusion!`)
                             collector1.stop('attack')
                             break;
                         }
 
                     } else {
-                        second.takeAttackDammage = [first.inflictDammage, message, false]
+                        let dmg = second.takeAttackDammage([first.inflictDammage, message, false])
+                        message.channel.send(`Dealt ${dmg} damage`)
+                        if (first.passive[0] == "Sadist") {
+                            first.buffStrength(dmg * 0.15)
+                        }
                         collector1.stop('attack')
                         break;
                     }
@@ -207,13 +218,17 @@ const playerTurn = async (message, battlefield, first, second) => {
                         if (reason && reason === 'back') {
                             playerTurn(message, battlefield, first, second)
                         } else{
-                            statusCheck(message, first, firstName, second)
+                            statusCheck(message, first, firstName, second, battlefield)
                             if (first.currentHp > 0 && second.currentHp > 0) {
                                 mobTurn(message, battlefield, second, first)
                             } else {
-                                message.channel.send("Match over!")
-                                await renderBattle(message, first, second, battlefield.background, true)
-                                await updatePlayer(message, battlefield.player1, first, second, false)
+                                if(battlefield.rewind === true){
+                                    startBattle(ogMessage, ogBattlefield)
+                                } else{
+                                    message.channel.send("Match over!")
+                                    await renderBattle(message, first, second, battlefield.background, true)
+                                    await updatePlayer(message, battlefield.player1, first, second, false)
+                                }
                             }
                         }
                         
@@ -271,13 +286,18 @@ const playerTurn = async (message, battlefield, first, second) => {
                             if (reason && reason === 'back') {
                                 playerTurn(message, battlefield, first, second)
                             } else{
-                                statusCheck(message, first, firstName, second)
+                                statusCheck(message, first, firstName, second, battlefield)
                                 if (first.currentHp > 0 && second.currentHp > 0) {
                                     mobTurn(message, battlefield, second, first)
                                 } else {
-                                    message.channel.send("Match over!")
-                                    await renderBattle(message, first, second, battlefield.background, true)
-                                    await updatePlayer(message, battlefield.player1, first, second, false)
+                                    if(battlefield.rewind === true){
+                                        startBattle(ogMessage, ogBattlefield)
+                                    } else {
+                                        message.channel.send("Match over!")
+                                        await renderBattle(message, first, second, battlefield.background, true)
+                                        await updatePlayer(message, battlefield.player1, first, second, false)
+                                    }
+                                    
                                 }
                             }
                             
@@ -295,7 +315,7 @@ const playerTurn = async (message, battlefield, first, second) => {
 
             case '4':
                 // NP
-                if (first.status.npSeal.active === true) {
+                if (first.status.npSeal.active === true && first.passive[0] != "Right-sider") {
                     message.channel.send(`${firstName} can't use their Noble Phantasm due to the NP Seal!`)
                     break;
                 } else if (first.charge < 7) {
@@ -337,13 +357,18 @@ const playerTurn = async (message, battlefield, first, second) => {
                     })
 
                     collector2.on('end', async () => {
-                        statusCheck(message, first, firstName, second)
+                        statusCheck(message, first, firstName, second, battlefield)
                         if (first.currentHp > 0 && second.currentHp > 0) {
                             mobTurn(message, battlefield, second, first)
                         } else {
-                            message.channel.send("Match over!")
-                            await renderBattle(message, first, second, battlefield.background, true)
-                            await updatePlayer(message, battlefield.player1, first, second, false)
+                            if(battlefield.rewind === true){
+                                startBattle(ogMessage, ogBattlefield)
+                            } else {
+                                message.channel.send("Match over!")
+                                await renderBattle(message, first, second, battlefield.background, true)
+                                await updatePlayer(message, battlefield.player1, first, second, false)
+                            }
+                            
                         }
                     })
 
@@ -428,13 +453,18 @@ const playerTurn = async (message, battlefield, first, second) => {
                             message.channel.send(`${firstName} and his master have fled from the battle.`)
                             await updatePlayer(message, battlefield.player1, first, second, true)
                         } else {
-                            statusCheck(message, first, firstName, second)
+                            statusCheck(message, first, firstName, second, battlefield)
                             if (first.currentHp > 0 && second.currentHp > 0) {
                                 mobTurn(message, battlefield, second, first)
                             } else {
-                                message.channel.send("Match over!")
-                                await renderBattle(message, first, second, battlefield.background, true)
-                                await updatePlayer(message, battlefield.player1, first, second, false)
+                                if(battlefield.rewind === true){
+                                    startBattle(ogMessage, ogBattlefield)
+                                } else {
+                                    message.channel.send("Match over!")
+                                    await renderBattle(message, first, second, battlefield.background, true)
+                                    await updatePlayer(message, battlefield.player1, first, second, false)
+                                }
+                                
                             }}
                         
                     })
@@ -449,13 +479,18 @@ const playerTurn = async (message, battlefield, first, second) => {
 
     collector1.on('end', async (collected, reason) => {
         if (reason && reason === 'attack') {
-            statusCheck(message, first, firstName, second)
+            statusCheck(message, first, firstName, second, battlefield)
             if (first.currentHp > 0 && second.currentHp > 0) {
                 mobTurn(message, battlefield, second, first)
             } else {
-                message.channel.send("Match over!")
-                await renderBattle(message, first, second, battlefield.background, true)
-                await updatePlayer(message, battlefield.player1, first, second, false)
+                if(battlefield.rewind === true){
+                    startBattle(ogMessage, ogBattlefield)
+                } else {
+                    message.channel.send("Match over!")
+                    await renderBattle(message, first, second, battlefield.background, true)
+                    await updatePlayer(message, battlefield.player1, first, second, false)
+                }
+                
             }
 
         } else if (reason && reason === 'spell') {
@@ -466,13 +501,18 @@ const playerTurn = async (message, battlefield, first, second) => {
 
         } else if (reason && reason === 'np') {
             await np(first, second, battlefield, message)
-            await statusCheck(message, first, firstName, second)
+            await statusCheck(message, first, firstName, second, battlefield)
             if (first.currentHp > 0 && second.currentHp > 0) {
                 mobTurn(message, battlefield, second, first)
             } else {
-                message.channel.send("Match over!")
-                await renderBattle(message, first, second, battlefield.background, true)
-                await updatePlayer(message, battlefield.player1, first, second, false)
+                if(battlefield.rewind === true){
+                    startBattle(ogMessage, ogBattlefield)
+                } else {
+                    message.channel.send("Match over!")
+                    await renderBattle(message, first, second, battlefield.background, true)
+                    await updatePlayer(message, battlefield.player1, first, second, false)
+                }
+               
             }
 
         } else if (reason && reason === 'name') {
@@ -483,14 +523,18 @@ const playerTurn = async (message, battlefield, first, second) => {
 
         } else {
             message.channel.send('Time out! Next player turn')
-            statusCheck(message, first, firstName, second)
+            statusCheck(message, first, firstName, second, battlefield)
             first.missedTurns += 1
             if (first.currentHp > 0 && second.currentHp > 0) {
                 mobTurn(message, battlefield, second, first)
             } else {
-                message.channel.send("Match over!")
+                if(battlefield.rewind === true){
+                    startBattle(ogMessage, ogBattlefield)
+                } else {
+                    message.channel.send("Match over!")
                 await renderBattle(message, first, second, battlefield.background, true)
                 await updatePlayer(message, battlefield.player1, first, second, false)
+                }  
             }
         }
 
@@ -518,20 +562,25 @@ const mobTurn = async (message, battlefield, second, first) => {
     }
    
     //attack
-    if (second.charge >= 7 && second.status.npSeal.active === false){
+    if (second.charge >= 7 && (second.status.npSeal.active === false || second.passive[0] == "Right-sider")){
         //use np
         await mobNp(second, first, battlefield, message)
-        statusCheck(message, second, secondName, first)
+        statusCheck(message, second, secondName, first, battlefield)
         if (first.currentHp > 0 && second.currentHp > 0) {
             playerTurn(message, battlefield, first, second)
         } else {
-            message.channel.send("Match over!")
-            await renderBattle(message, first, second, battlefield.background, true)
-            await updatePlayer(message, battlefield.player1, first, second, false)
+            if(battlefield.rewind === true){
+                startBattle(ogMessage, ogBattlefield)
+            } else {
+                message.channel.send("Match over!")
+                await renderBattle(message, first, second, battlefield.background, true)
+                await updatePlayer(message, battlefield.player1, first, second, false)
+            }
+            
         }
     } else if (second.status.stun.active === true) {
         message.channel.send(`${secondName} is stunned they can not move!`)
-        statusCheck(message, second, secondName, first)
+        statusCheck(message, second, secondName, first, battlefield)
         playerTurn(message, battlefield, first, second)
         
     } else {
@@ -539,41 +588,63 @@ const mobTurn = async (message, battlefield, second, first) => {
             let confuse = Math.floor(Math.random() * 2);
             if (confuse === 0) {
                 message.channel.send('Enemy attacks!')
-                first.takeAttackDammage = [second.inflictDammage, message, false]
-                statusCheck(message, second, secondName, first)
+                let dmg = first.takeAttackDammage([second.inflictDammage, message, false])
+                message.channel.send(`Dealt ${dmg} damage`)
+                if (second.passive[0] == "Sadist") {
+                    second.buffStrength(dmg * 0.15)
+                }
+                statusCheck(message, second, secondName, first, battlefield)
                 if (first.currentHp > 0 && second.currentHp > 0) {
                     playerTurn(message, battlefield, first, second)
                 } else {
-                    message.channel.send("Match over!")
-                    await renderBattle(message, first, second, battlefield.background, true)
-                    await updatePlayer(message, battlefield.player1, first, second, false)
+                    if(battlefield.rewind === true){
+                        startBattle(ogMessage, ogBattlefield)
+                    } else {
+                        message.channel.send("Match over!")
+                        await renderBattle(message, first, second, battlefield.background, true)
+                        await updatePlayer(message, battlefield.player1, first, second, false)
+                    }
                 }
                 
                 
             } else {
                 // confusion triggers servant hits themselves
                 message.channel.send('Enemy attacks!')
-                second.takeAttackDammage = [second.inflictDammage, message, false]
+                let dmg = second.takeAttackDammage([second.inflictDammage, message, false])
+                message.channel.send(`Dealt ${dmg} damage`)
                 message.channel.send(`${secondName} got hurt in their confusion!`)
-                statusCheck(message, second, secondName, first)
+                statusCheck(message, second, secondName, first, battlefield)
                 if (first.currentHp > 0 && second.currentHp > 0) {
                     playerTurn(message, battlefield, first, second)
+                } else {
+                    if(battlefield.rewind === true){
+                        startBattle(ogMessage, ogBattlefield)
+                    } else {
+                        message.channel.send("Match over!")
+                        await renderBattle(message, first, second, battlefield.background, true)
+                        await updatePlayer(message, battlefield.player1, first, second, false)
+                    }
+                }
+            }
+        } else {
+            message.channel.send('Enemy attacks!')
+            let dmg = first.takeAttackDammage([second.inflictDammage, message, false])
+            message.channel.send(`Dealt ${dmg} damage`)
+            if (second.passive[0] == "Sadist") {
+                second.buffStrength(dmg * 0.15)
+            }
+            statusCheck(message, second, secondName, first, battlefield)
+            if (first.currentHp > 0 && second.currentHp > 0) {
+                playerTurn(message, battlefield, first, second)
+            } else {
+                if(battlefield.rewind === true){
+                    startBattle(ogMessage, ogBattlefield)
                 } else {
                     message.channel.send("Match over!")
                     await renderBattle(message, first, second, battlefield.background, true)
                     await updatePlayer(message, battlefield.player1, first, second, false)
                 }
-            }
-        } else {
-            message.channel.send('Enemy attacks!')
-            first.takeAttackDammage = [second.inflictDammage, message, false]
-            statusCheck(message, second, secondName, first)
-            if (first.currentHp > 0 && second.currentHp > 0) {
-                playerTurn(message, battlefield, first, second)
-            } else {
-                message.channel.send("Match over!")
-                await renderBattle(message, first, second, battlefield.background, true)
-                await updatePlayer(message, battlefield.player1, first, second, false)
+                
             }
         }
     }
@@ -610,8 +681,9 @@ const mobFight = async (message) => {
                         player1: {},
                         servant1: {},
                         servant2: {},
-                        turn: 0,
-                        background: backgrounds[bcg]
+                        turn: 1,
+                        background: backgrounds[bcg],
+                        rewind: false
                     }
                      
                     battlefield.player1 = user// must be the first one
@@ -639,23 +711,39 @@ const mobFight = async (message) => {
 
 
 
-                    battlefield.servant1basestats = { ...battlefield.servant1.stats }
-                    battlefield.servant2basestats = { ...battlefield.servant2.stats }
+                    battlefield.servant1.baseStats = { ...battlefield.servant1.stats }
+                    battlefield.servant2.baseStats = { ...battlefield.servant2.stats }
+                    battlefield.servant1.lastTurnStats = { ...battlefield.servant1.stats }
+                    battlefield.servant2.lastTurnStats = { ...battlefield.servant2.stats }
 
                     let first = ''
                     let second = ''
                     
+                    //abilityCheck
+                    [battlefield.servant1, battlefield.servant2] = await abilityCheck(battlefield.servant1, battlefield.servant2, message)
+                    
                     // console.log('battle start!')
+                    const ogMessage = message
+                    const ogBattlefield = battlefield
 
-                    if (battlefield.servant1.stats.agility > battlefield.servant2.stats.agility) {
-                        first = battlefield.servant1
-                        second = battlefield.servant2
-                        playerTurn(message, battlefield, first, second)
-                    } else {
-                        first = battlefield.servant1
-                        second = battlefield.servant2
-                        mobTurn(message, battlefield, second, first)
+                    const startBattle = (message, battlefield)=>{
+                        if (battlefield.servant1.stats.agility > battlefield.servant2.stats.agility && !(battlefield.servant1.passive[0] == "Aesthetics of the Last Spurt" || battlefield.servant2.passive[0] == "Shukuchi")) {
+                            first = battlefield.servant1
+                            second = battlefield.servant2
+                            playerTurn(message, battlefield, first, second)
+                        } else if (battlefield.servant1.passive[0] == "Shukuchi") {
+                            first = battlefield.servant1
+                            second = battlefield.servant2
+                            playerTurn(message, battlefield, first, second)
+                        }else {
+                            first = battlefield.servant1
+                            second = battlefield.servant2
+                            mobTurn(message, battlefield, second, first)
+                        }
                     }
+
+                    startBattle(ogMessage, ogBattlefield)
+                    
 
                 }
             })

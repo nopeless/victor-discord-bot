@@ -14,15 +14,16 @@ const Server = require('../models/Server');
 const User = require('../models/user');
 const auth = require("../../auth.json");
 const prefix = auth.prefix;
-
+// Server.findOne({ serverID: message.guild.id }, async(err, server) => {
 const chooseAction = (message, client)=>{
     
-    Server.findOne({ serverID: message.guild.id }, async(err, server) => {
+    Server.find({ serverID: message.guild.id }, { players: { "$elemMatch": { playerID: message.author.id } } }, async(err, server) => {
         if (err) {
             console.log(err);
         }
         else {
-            let user = await server.players[server.playersMap.get(message.author.id)]
+            // let user = await server.players[server.playersMap.get(message.author.id)]
+            let user = server[0].players[0]
             if (user && user !== undefined) {
                 if(user.isFighting === false){
                     if (user.currentAp > 0){
@@ -50,7 +51,7 @@ const chooseAction = (message, client)=>{
                                             8. Arena <:Icon_Coin_Mooncell:663389214976770049>\n
                                             9. Gil's Shop <:grail:663138422763945985>\n
                                             10. Chaldea <:Saintquartz:693210492818423858>\n
-                                            
+                                            11. Summer Event <:darkness_embarrassed:712072695029825618>
                                                    
                                             `)
                                     // add events 11. Event <:archer_santa:586620773238571008>
@@ -96,14 +97,14 @@ const chooseAction = (message, client)=>{
                                             case '10':
                                                 chaldea(message, user)
                                                 break;
-                                            // case '11':
-                                            //     let currentDate = Date.now()
-                                            //     if (currentDate > 1608502136977 + 864000000){
-                                            //         message.channel.send('Event has ended')
-                                            //     } else{
-                                            //         event(message, user)
-                                            //     }
-                                            //     break;
+                                            case '11':
+                                                let currentDate = Date.now()
+                                                if (currentDate > 1628642138277 + 1510000000){
+                                                    message.channel.send('Event has ended')
+                                                } else{
+                                                    event(message, user)
+                                                }
+                                                break;
                                             case 'cancel':
                                                 message.channel.send('canceled')
                                                 break;

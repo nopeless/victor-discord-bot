@@ -1,5 +1,4 @@
 const {reactions, modifyEthics, modifyMorality} = require('./module');
-const Server = require("../models/Server");
 const churchEventsDialogues = require("../dialogues/churchEventsDialogues");
 const libraryEventsDialogues = require('../dialogues/libraryEventsDialogues');
 const nurseEventsDialogues = require('../dialogues/nurseEventsDialogues');
@@ -19,10 +18,10 @@ const churchEvents = (message, client)=>{
     const index = Math.floor(Math.random() * churchEventsDialogues.length)
 
     reactions(textfile, message, client, index,
-        function () { modifyMorality(Server, message, values[index][0]); modifyEthics(Server, message, values[index][1]); },
-        function () { modifyMorality(Server, message, values[index][2]); modifyEthics(Server, message, values[index][3]); },
-        function () { modifyMorality(Server, message, values[index][4]); modifyEthics(Server, message, values[index][5]); },
-        function () { modifyMorality(Server, message, values[index][6]); modifyEthics(Server, message, values[index][7]); }
+        function () { modifyMorality(message, values[index][0]); modifyEthics(message, values[index][1]); },
+        function () { modifyMorality(message, values[index][2]); modifyEthics(message, values[index][3]); },
+        function () { modifyMorality(message, values[index][4]); modifyEthics(message, values[index][5]); },
+        function () { modifyMorality(message, values[index][6]); modifyEthics(message, values[index][7]); }
     )
 }
 
@@ -37,10 +36,10 @@ const libraryEvents = (message, client) => {
     const index = Math.floor(Math.random() * libraryEventsDialogues.length)
 
     reactions(textfile, message, client, index,
-        function () { modifyMorality(Server, message, values[index][0]); modifyEthics(Server, message, values[index][1]); },
-        function () { modifyMorality(Server, message, values[index][2]); modifyEthics(Server, message, values[index][3]); },
-        function () { modifyMorality(Server, message, values[index][4]); modifyEthics(Server, message, values[index][5]); },
-        function () { modifyMorality(Server, message, values[index][6]); modifyEthics(Server, message, values[index][7]); }
+        function () { modifyMorality(message, values[index][0]); modifyEthics(message, values[index][1]); },
+        function () { modifyMorality(message, values[index][2]); modifyEthics(message, values[index][3]); },
+        function () { modifyMorality(message, values[index][4]); modifyEthics(message, values[index][5]); },
+        function () { modifyMorality(message, values[index][6]); modifyEthics(message, values[index][7]); }
     )
 }
 
@@ -56,10 +55,10 @@ const nurseEvents = (message, client) => {
     const index = Math.floor(Math.random() * nurseEventsDialogues.length)
 
     reactions(textfile, message, client, index,
-        function () { modifyMorality(Server, message, values[index][0]); modifyEthics(Server, message, values[index][1]); },
-        function () { modifyMorality(Server, message, values[index][2]); modifyEthics(Server, message, values[index][3]); },
-        function () { modifyMorality(Server, message, values[index][4]); modifyEthics(Server, message, values[index][5]); },
-        function () { modifyMorality(Server, message, values[index][6]); modifyEthics(Server, message, values[index][7]); }
+        function () { modifyMorality(message, values[index][0]); modifyEthics(message, values[index][1]); },
+        function () { modifyMorality(message, values[index][2]); modifyEthics(message, values[index][3]); },
+        function () { modifyMorality(message, values[index][4]); modifyEthics(message, values[index][5]); },
+        function () { modifyMorality(message, values[index][6]); modifyEthics(message, values[index][7]); }
     )
 }
 
@@ -74,10 +73,10 @@ const alchemyEvents = (message, client) => {
     const index = Math.floor(Math.random() * alchemyEventsDialogues.length)
 
     reactions(textfile, message, client, index,
-        function () { modifyMorality(Server, message, values[index][0]); modifyEthics(Server, message, values[index][1]); },
-        function () { modifyMorality(Server, message, values[index][2]); modifyEthics(Server, message, values[index][3]); },
-        function () { modifyMorality(Server, message, values[index][4]); modifyEthics(Server, message, values[index][5]); },
-        function () { modifyMorality(Server, message, values[index][6]); modifyEthics(Server, message, values[index][7]); }
+        function () { modifyMorality(message, values[index][0]); modifyEthics(message, values[index][1]); },
+        function () { modifyMorality(message, values[index][2]); modifyEthics(message, values[index][3]); },
+        function () { modifyMorality(message, values[index][4]); modifyEthics(message, values[index][5]); },
+        function () { modifyMorality(message, values[index][6]); modifyEthics(message, values[index][7]); }
     )
 }
 
@@ -94,10 +93,10 @@ const marketEvents = (message, client) => {
     const index = Math.floor(Math.random() * marketEventsDialogues.length)
 
     reactions(textfile, message, client, index,
-        function () { modifyMorality(Server, message, values[index][0]); modifyEthics(Server, message, values[index][1]); },
-        function () { modifyMorality(Server, message, values[index][2]); modifyEthics(Server, message, values[index][3]); },
-        function () { modifyMorality(Server, message, values[index][4]); modifyEthics(Server, message, values[index][5]); },
-        function () { modifyMorality(Server, message, values[index][6]); modifyEthics(Server, message, values[index][7]); }
+        function () { modifyMorality(message, values[index][0]); modifyEthics(message, values[index][1]); },
+        function () { modifyMorality(message, values[index][2]); modifyEthics(message, values[index][3]); },
+        function () { modifyMorality(message, values[index][4]); modifyEthics(message, values[index][5]); },
+        function () { modifyMorality(message, values[index][6]); modifyEthics(message, values[index][7]); }
     )
 }
 
@@ -111,10 +110,10 @@ const undergroundsEvents = (message, client) => {
     const index = Math.floor(Math.random() * undergroundsEventsDialogues.length)
 
     reactions(textfile, message, client, index,
-        function () { modifyMorality(Server, message, values[index][0]); modifyEthics(Server, message, values[index][1]); },
-        function () { modifyMorality(Server, message, values[index][2]); modifyEthics(Server, message, values[index][3]); },
-        function () { modifyMorality(Server, message, values[index][4]); modifyEthics(Server, message, values[index][5]); },
-        function () { modifyMorality(Server, message, values[index][6]); modifyEthics(Server, message, values[index][7]); }
+        function () { modifyMorality(message, values[index][0]); modifyEthics(message, values[index][1]); },
+        function () { modifyMorality(message, values[index][2]); modifyEthics(message, values[index][3]); },
+        function () { modifyMorality(message, values[index][4]); modifyEthics(message, values[index][5]); },
+        function () { modifyMorality(message, values[index][6]); modifyEthics(message, values[index][7]); }
     )
 }
 
@@ -129,10 +128,10 @@ const cityEvents = (message, client) => {
     const index = Math.floor(Math.random() * cityEventsDialogues.length)
 
     reactions(textfile, message, client, index,
-        function () { modifyMorality(Server, message, values[index][0]); modifyEthics(Server, message, values[index][1]); },
-        function () { modifyMorality(Server, message, values[index][2]); modifyEthics(Server, message, values[index][3]); },
-        function () { modifyMorality(Server, message, values[index][4]); modifyEthics(Server, message, values[index][5]); },
-        function () { modifyMorality(Server, message, values[index][6]); modifyEthics(Server, message, values[index][7]); }
+        function () { modifyMorality(message, values[index][0]); modifyEthics(message, values[index][1]); },
+        function () { modifyMorality(message, values[index][2]); modifyEthics(message, values[index][3]); },
+        function () { modifyMorality(message, values[index][4]); modifyEthics(message, values[index][5]); },
+        function () { modifyMorality(message, values[index][6]); modifyEthics(message, values[index][7]); }
     )
 }
 
@@ -146,10 +145,10 @@ const arenaEvents = (message, client) => {
     const index = Math.floor(Math.random() * arenaEventsDialogues.length)
 
     reactions(textfile, message, client, index,
-        function () { modifyMorality(Server, message, values[index][0]); modifyEthics(Server, message, values[index][1]); },
-        function () { modifyMorality(Server, message, values[index][2]); modifyEthics(Server, message, values[index][3]); },
-        function () { modifyMorality(Server, message, values[index][4]); modifyEthics(Server, message, values[index][5]); },
-        function () { modifyMorality(Server, message, values[index][6]); modifyEthics(Server, message, values[index][7]); }
+        function () { modifyMorality(message, values[index][0]); modifyEthics(message, values[index][1]); },
+        function () { modifyMorality(message, values[index][2]); modifyEthics(message, values[index][3]); },
+        function () { modifyMorality(message, values[index][4]); modifyEthics(message, values[index][5]); },
+        function () { modifyMorality(message, values[index][6]); modifyEthics(message, values[index][7]); }
     )
 }
 

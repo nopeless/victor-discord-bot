@@ -1,13 +1,11 @@
 const Server = require('../models/Server')
+const getUser = require("./getUser")
+const saveUser = require("./saveUser")
 
 async function daily(message) {
-    Server.findOne({ serverID: message.guild.id }, async (err, server) => {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            const getIndex = server.playersMap.get(message.author.id)
-            let user = await server.players[getIndex]
+    let data = await getUser(message);
+    let [playersMap, user] = [data[0].playersMap, data[0].players[0]]
+    const getIndex = playersMap.get(message.author.id)
             if (user && user !== undefined) {
                 if (user.isFighting === false) {
                     const now = Date.now()
@@ -15,26 +13,10 @@ async function daily(message) {
                         const gain = Math.floor(Math.random() * 9001) + 1000;  // returns a random integer from 1000 to 5000 
                         user.money += gain
                         user.daily = Date.now()
-                        // await server.save(async function (err, data) {
-                        //     if (err) {
-                        //         console.log(err);
-                        //         daily(message)
-                        //     } else {
-                        //         message.channel.send(`+ ${gain} QP`)
-                        //     }
-                        // })
 
                         let query = { [`players.${getIndex}.money`]: user.money, [`players.${getIndex}.daily`]: user.daily };
-                        Server.updateOne({ serverID: message.guild.id },
-                            {
-                                $set: query
-                            }, async (err) => {
-                                if (err) {
-                                    console.log(err);
-                                } else {
-                                    message.channel.send(`+ ${gain} QP`)
-                                }
-                            }).lean()
+                        saveUser(message, query)
+                        message.channel.send(`+ ${gain} QP`)
                         
                     } else{
                         
@@ -62,7 +44,5 @@ async function daily(message) {
                 message.channel.send('You need to register first.')
             }
         }
-    })
-}
 
 module.exports = daily;

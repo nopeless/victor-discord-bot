@@ -39,6 +39,7 @@ const servantSearch = (message) => {
                                 .addField(`Code:`, character.code)
                                 .addField(`Summonable with:`, character.summonableWith)
                                 .addField(`Alignment:`, alignment)
+                                .addField(`Passive:`, `${character.passive[0]} - ${character.passive[1]}`)
                                 .addField(`Noble Phantasm:`, `${character.noblePhantasm.name}`)
                                 .addField('NP Description:', `${character.noblePhantasm.description}`)
                                 .addField('Base Stats:', `${character.maxHp} HP`, false)

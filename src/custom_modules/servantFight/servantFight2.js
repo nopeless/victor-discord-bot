@@ -14,22 +14,26 @@ const useItem = require('../useItem');
 const statusCheck = require('../statusCheck');
 const updatePlayer = require('../updatePlayer');
 const showCurrentStats = require('./showCurrentStats');
+const abilityCheck = require('../abilityCheck');
 // const servantTurn = require('./servantTurn');
 const prefix = auth.prefix;
 
 class ServantFight{
 
     constructor(message, level, player, bcg){
+        this.level = level
+        this.player = player
+        this.bcg = bcg
         this.message = message
         this.battlefield = {
             player1: player,
             servant1: new BattleUnit(player.servants[0]),
             servant2: new BattleUnit(charactersList[Math.floor(Math.random() * charactersList.length)]),
-            turn: 0,
+            turn: 1,
             background: backgrounds[bcg],
-            servant1basestats: {},
-            servant2basestats: {}
+            rewind: false
         }
+        this.ogBattlefield = {}
 
         this.battlefield.servant1.stats.strength += this.battlefield.player1.stats.strength
         this.battlefield.servant1.stats.endurance += this.battlefield.player1.stats.endurance
@@ -50,17 +54,34 @@ class ServantFight{
 
 
 
-        this.battlefield.servant1basestats = { ...this.battlefield.servant1.stats }
-        this.battlefield.servant2basestats = { ...this.battlefield.servant2.stats }
+        this.battlefield.servant1.baseStats = { ...this.battlefield.servant1.stats }
+        this.battlefield.servant2.baseStats = { ...this.battlefield.servant2.stats }
+        this.battlefield.servant1.lastTurnStats = { ...this.battlefield.servant1.stats }
+        this.battlefield.servant2.lastTurnStats = { ...this.battlefield.servant2.stats }
 
         this.first = ''
         this.second = ''
     }
 
+    causeRewind(){
+        this.battlefield = this.ogBattlefield
+    }
+
     async start(){
+        //abilityCheck
+        [this.battlefield.servant1, this.battlefield.servant2] = await abilityCheck(this.battlefield.servant1, this.battlefield.servant2, this.message)
+        this.ogBattlefield = {...this.battlefield}
         // console.log('battle start!')
         this.message.channel.send('If you finished the fight or bot stopped responding during a fight and you can not perform any action(f/a), please use **f/iamnotfighting** command')
-        if (this.battlefield.servant1.stats.agility > this.battlefield.servant2.stats.agility) {
+        if (this.battlefield.servant1.stats.agility > this.battlefield.servant2.stats.agility && !(this.battlefield.servant1.passive[0] == "Aesthetics of the Last Spurt" || this.battlefield.servant2.passive[0] == "Shukuchi")) {
+            this.first = this.battlefield.servant1
+            this.second = this.battlefield.servant2
+            this.playerTurn()
+        } else if (this.battlefield.servant2.passive[0] == "Aesthetics of the Last Spurt"){
+            this.first = this.battlefield.servant1
+            this.second = this.battlefield.servant2
+            this.playerTurn()
+        } else if (this.battlefield.servant1.passive[0] == "Shukuchi") {
             this.first = this.battlefield.servant1
             this.second = this.battlefield.servant2
             this.playerTurn()
@@ -73,6 +94,7 @@ class ServantFight{
 
     async playerTurn(){
         await renderBattle(this.message, this.first, this.second, this.battlefield.background)
+        this.message.channel.send(`Turn ${Math.floor(this.battlefield.turn)}`)
 
         let firstName = ''
         if (this.first.revealed) {
@@ -122,19 +144,28 @@ class ServantFight{
                         if (this.first.status.confusion.active === true) {
                             let confuse = Math.floor(Math.random() * 2);
                             if (confuse === 0) {
-                                this.second.takeAttackDammage = [this.first.inflictDammage, message, false]
+                                let dmg = await this.second.takeAttackDammage([this.first.inflictDammage, message, false])
+                                this.message.channel.send(`Dealt ${dmg} damage`)
+                                if (this.first.passive[0] == "Sadist"){
+                                    this.first.buffStrength(dmg * 0.15)
+                                }
                                 collector1.stop('attack')
                                 break;
                             } else {
                                 // confusion triggers servant hits themselves
-                                this.first.takeAttackDammage = [this.first.inflictDammage, message, false]
+                                let dmg = await this.first.takeAttackDammage([this.first.inflictDammage, message, false])
+                                this.message.channel.send(`Dealt ${dmg} damage`)
                                 message.channel.send(`${firstName} got hurt in their confusion!`)
                                 collector1.stop('attack')
                                 break;
                             }
 
                         } else {
-                            this.second.takeAttackDammage = [this.first.inflictDammage, message, false]
+                            let dmg = await this.second.takeAttackDammage([this.first.inflictDammage, message, false])
+                            this.message.channel.send(`Dealt ${dmg} damage`)
+                            if (this.first.passive[0] == "Sadist") {
+                                this.first.buffStrength(dmg * 0.15)
+                            }
                             collector1.stop('attack')
                             break;
                         }
@@ -257,8 +288,11 @@ class ServantFight{
                             if (reason && reason === 'back') {
                                 this.playerTurn()
                             } else {
-                                await statusCheck(message, this.first, firstName, this.second)
+                                await statusCheck(message, this.first, firstName, this.second, this.battlefield)
                                 if (this.first.currentHp > 0 && this.second.currentHp > 0) {
+                                    if (this.battlefield.rewind === true) {
+                                        this.causeRewind()
+                                    }
                                     setTimeout(() => { this.servantTurn() }, 1000)
                                 } else {
                                     message.channel.send("Match over!")
@@ -321,14 +355,17 @@ class ServantFight{
                                 if (reason && reason === 'back') {
                                     this.playerTurn()
                                 } else {
-                                    await statusCheck(message, this.first, firstName, this.second)
+                                    await statusCheck(message, this.first, firstName, this.second, this.battlefield)
                                     if (this.first.currentHp > 0 && this.second.currentHp > 0) {
+                                        if (this.battlefield.rewind === true) {
+                                            this.causeRewind()
+                                        }
                                         setTimeout(() => { this.servantTurn() }, 1000)
                                     } else {
                                         message.channel.send("Match over!")
                                         await renderBattle(message, this.first, this.second, this.battlefield.background)
                                         await updatePlayer(message, this.battlefield.player1, this.first, this.second, false, 2, 3)
-                                    }
+                                        }
                                 }
 
                             })
@@ -345,7 +382,7 @@ class ServantFight{
 
                 case '4':
                     // NP
-                    if (this.first.status.npSeal.active === true) {
+                    if (this.first.status.npSeal.active === true && this.first.passive[0] != "Right-sider") {
                         message.channel.send(`${firstName} can't use their Noble Phantasm due to the NP Seal!`)
                         break;
                     } else if (this.first.charge < 7) {
@@ -372,13 +409,13 @@ class ServantFight{
                         collector2.on('collect', async message => {
                             const guess = message.content.slice(prefix.length).trim().split(/ +/g)
                             const input = guess.join(" ");
-                            if (this.second.name.includes(input.toLowerCase()) || this.first.class === "Ruler") {
+                            if ((this.second.name.includes(input.toLowerCase()) && this.second.passive[0] != "Information Erasure") || this.first.class == "Ruler") {
                                 this.second.stats.strength = this.second.stats.strength / 2
                                 this.second.stats.magic = this.second.stats.magic / 2
                                 this.second.revealed = true
 
                                 if (this.first.class === "Ruler") {
-                                    message.channel.send(`${this.second.class}'s True Name was revelated, their strength and magic stats fell significantly...`)
+                                    message.channel.send(`${this.second.class}'s True Name was revealed, their strength and magic stats fell significantly...`)
                                 } else {
                                     message.channel.send(`That's right, it's ${input}!\n${input}'s strength and magic stats fell significantly...`)
                                 }
@@ -389,14 +426,19 @@ class ServantFight{
                         })
 
                         collector2.on('end', async () => {
-                            await statusCheck(message, this.first, firstName, this.second)
+                            await statusCheck(message, this.first, firstName, this.second, this.battlefield)
                             if (this.first.currentHp > 0 && this.second.currentHp > 0) {
+                                if (this.battlefield.rewind === true) {
+                                    this.causeRewind()
+                                }
                                 setTimeout(() => { this.servantTurn() }, 1000)
                             } else {
+                                
                                 message.channel.send("Match over!")
                                 await renderBattle(message, this.first, this.second, this.battlefield.background)
                                 await updatePlayer(message, this.battlefield.player1, this.first, this.second, false, 2, 3)
-                            }
+                                
+                               }
                         })
 
                     }
@@ -432,43 +474,62 @@ class ServantFight{
                             let commandSeals = ''
                             switch (input) {
                                 case '1':
-                                    this.first.stats.strength += this.first.stats.strength / 2
-                                    this.first.stats.magic += this.first.stats.magic / 2
-                                    this.battlefield.player1.commandsLeft -= 1
-                                    numberOfUses = this.battlefield.player1.commandsLeft
-                                    commandSeals = this.battlefield.player1.commandId
-                                    attachment = new MessageAttachment(`./src/commandsPictures/cs${commandSeals}_${numberOfUses}.png`, `cs${commandSeals}_${numberOfUses}.png`);
-                                    await message.channel.send(attachment)
                                     collector2.stop()
+                                    
+                                    if (this.battlefield.player1.commandsLeft >0){
+                                        this.battlefield.player1.commandsLeft -= 1
+                                        this.first.stats.strength += this.first.stats.strength / 2
+                                        this.first.stats.magic += this.first.stats.magic / 2
+                                        numberOfUses = this.battlefield.player1.commandsLeft
+                                        commandSeals = this.battlefield.player1.commandId
+                                        attachment = new MessageAttachment(`./src/commandsPictures/cs${commandSeals}_${numberOfUses}.png`, `cs${commandSeals}_${numberOfUses}.png`);
+                                        await message.channel.send(attachment)
+                                    }
+                                      
                                     break;
 
                                 case '2':
-                                    this.first.currentHp = this.first.maxHp
-                                    this.battlefield.player1.commandsLeft -= 1
-                                    numberOfUses = this.battlefield.player1.commandsLeft
-                                    commandSeals = this.battlefield.player1.commandId
-                                    attachment = new MessageAttachment(`./src/commandsPictures/cs${commandSeals}_${numberOfUses}.png`, `cs${commandSeals}_${numberOfUses}.png`);
-                                    await message.channel.send(attachment)
                                     collector2.stop()
+                                    
+                                    if (this.battlefield.player1.commandsLeft > 0) {
+                                        this.battlefield.player1.commandsLeft -= 1
+                                        this.first.currentHp = this.first.maxHp
+                                        numberOfUses = this.battlefield.player1.commandsLeft
+                                        commandSeals = this.battlefield.player1.commandId
+                                        attachment = new MessageAttachment(`./src/commandsPictures/cs${commandSeals}_${numberOfUses}.png`, `cs${commandSeals}_${numberOfUses}.png`);
+                                        await message.channel.send(attachment)
+                                    }
+                                    
                                     break;
 
                                 case '3':
-                                    this.first.noblePhantasm.canBeUsed = true
-                                    this.first.charge = 7
-                                    this.battlefield.player1.commandsLeft -= 1
-                                    numberOfUses = this.battlefield.player1.commandsLeft
-                                    commandSeals = this.battlefield.player1.commandId
-                                    attachment = new MessageAttachment(`./src/commandsPictures/cs${commandSeals}_${numberOfUses}.png`, `cs${commandSeals}_${numberOfUses}.png`);
-                                    await message.channel.send(attachment)
                                     collector2.stop()
+                                    if (this.battlefield.player1.commandsLeft > 0) {
+                                        this.battlefield.player1.commandsLeft -= 1
+                                        this.first.noblePhantasm.canBeUsed = true
+                                        this.first.charge = 7
+                                        numberOfUses = this.battlefield.player1.commandsLeft
+                                        commandSeals = this.battlefield.player1.commandId
+                                        attachment = new MessageAttachment(`./src/commandsPictures/cs${commandSeals}_${numberOfUses}.png`, `cs${commandSeals}_${numberOfUses}.png`);
+                                        await message.channel.send(attachment)
+                                    }
+                                    
+                                    
                                     break;
                                 case '4':
-                                    this.battlefield.player1.commandsLeft -= 1
-                                    numberOfUses = this.battlefield.player1.commandsLeft
-                                    commandSeals = this.battlefield.player1.commandId
-                                    attachment = new MessageAttachment(`./src/commandsPictures/cs${commandSeals}_${numberOfUses}.png`, `cs${commandSeals}_${numberOfUses}.png`);
-                                    await message.channel.send(attachment)
-                                    collector2.stop('escape')
+                                    if (this.second.passive[0] === "Ath nGabla") {
+                                        message.channel.send("Can not escape")
+                                    } else {
+                                        collector2.stop('escape')
+                                    }
+                                    if (this.battlefield.player1.commandsLeft > 0) {
+                                        this.battlefield.player1.commandsLeft -= 1
+                                        numberOfUses = this.battlefield.player1.commandsLeft
+                                        commandSeals = this.battlefield.player1.commandId
+                                        attachment = new MessageAttachment(`./src/commandsPictures/cs${commandSeals}_${numberOfUses}.png`, `cs${commandSeals}_${numberOfUses}.png`);
+                                        await message.channel.send(attachment)
+                                    }
+                                    
                                     break;
                                 case 'back':
                                     collector2.stop('back')
@@ -483,14 +544,19 @@ class ServantFight{
                                 message.channel.send(`${firstName} and his master have fled from the battle.`)
                                 await updatePlayer(message, this.battlefield.player1, this.first, this.second, true, 2, 3)
                             } else {
-                                await statusCheck(message, this.first, firstName, this.second)
+                                await statusCheck(message, this.first, firstName, this.second, this.battlefield)
                                 if (this.first.currentHp > 0 && this.second.currentHp > 0) {
+                                    if (this.battlefield.rewind === true) {
+                                        this.causeRewind()
+                                    }
                                     setTimeout(() => { this.servantTurn() }, 1000)
                                 } else {
-                                    message.channel.send("Match over!")
-                                    await renderBattle(message, this.first, this.second, this.battlefield.background)
-                                    await updatePlayer(message, this.battlefield.player1, this.first, this.second, false, 2, 3)
-                                }
+                                    
+                                        message.channel.send("Match over!")
+                                        await renderBattle(message, this.first, this.second, this.battlefield.background)
+                                        await updatePlayer(message, this.battlefield.player1, this.first, this.second, false, 2, 3)
+                                    
+                                }     
                             }
 
                         })
@@ -520,13 +586,16 @@ class ServantFight{
 
         collector1.on('end', async (collected, reason) => {
             if (reason && reason === 'attack') {
-                await statusCheck(this.message, this.first, firstName, this.second)
+                await statusCheck(this.message, this.first, firstName, this.second, this.battlefield)
                 if (this.first.currentHp > 0 && this.second.currentHp > 0) {
+                    if (this.battlefield.rewind === true) {
+                        this.causeRewind()
+                    }
                     setTimeout(() => { this.servantTurn() }, 1000)
                 } else {
-                    this.message.channel.send("Match over!")
-                    await renderBattle(this.message, this.first, this.second, this.battlefield.background)
-                    await updatePlayer(this.message, this.battlefield.player1, this.first, this.second, false, 2, 3)
+                        this.message.channel.send("Match over!")
+                        await renderBattle(this.message, this.first, this.second, this.battlefield.background)
+                        await updatePlayer(this.message, this.battlefield.player1, this.first, this.second, false, 2, 3)
                 }
 
             } else if (reason && reason === 'spell') {
@@ -537,13 +606,18 @@ class ServantFight{
 
             } else if (reason && reason === 'np') {
                 await np(this.first, this.second, this.battlefield, this.message)
-                await statusCheck(this.message, this.first, firstName, this.second)
+                await statusCheck(this.message, this.first, firstName, this.second, this.battlefield)
                 if (this.first.currentHp > 0 && this.second.currentHp > 0) {
+                    if (this.battlefield.rewind === true) {
+                        this.causeRewind()
+                    }
                     setTimeout(() => { this.servantTurn() }, 1000)
                 } else {
-                    this.message.channel.send("Match over!")
-                    await renderBattle(this.message, this.first, this.second, this.battlefield.background)
-                    await updatePlayer(this.message, this.battlefield.player1, this.first, this.second, false, 2, 3)
+                     
+                        this.message.channel.send("Match over!")
+                        await renderBattle(this.message, this.first, this.second, this.battlefield.background)
+                        await updatePlayer(this.message, this.battlefield.player1, this.first, this.second, false, 2, 3)
+                    
                 }
 
             } else if (reason && reason === 'name') {
@@ -554,14 +628,19 @@ class ServantFight{
 
             } else {
                 this.message.channel.send('Time out! Next player turn')
-                await statusCheck(this.message, this.first, firstName, this.second)
+                await statusCheck(this.message, this.first, firstName, this.second, this.battlefield)
                 this.first.missedTurns += 1
                 if (this.first.currentHp > 0 && this.second.currentHp > 0) {
+                    if (this.battlefield.rewind === true) {
+                        this.causeRewind()
+                    }
                     setTimeout(() => { this.servantTurn() }, 1000)
                 } else {
-                    this.message.channel.send("Match over!")
-                    await renderBattle(this.message, this.first, this.second, this.battlefield.background)
-                    await updatePlayer(this.message, this.battlefield.player1, this.first, this.second, false, 2, 3)
+                     
+                        this.message.channel.send("Match over!")
+                        await renderBattle(this.message, this.first, this.second, this.battlefield.background)
+                        await updatePlayer(this.message, this.battlefield.player1, this.first, this.second, false, 2, 3)
+                    
                 }
             }
 
@@ -580,61 +659,101 @@ class ServantFight{
         }
 
         //attack
-        if (this.second.charge >= 7 && this.second.status.npSeal.active === false) {
+        if (this.second.charge >= 7 && ( this.second.status.npSeal.active === false || this.second.passive[0] == "Right-sider" )) {
             //use np
             await np(this.second, this.first, this.battlefield, this.message)
-            await statusCheck(this.message, this.second, secondName, this.first)
+            await statusCheck(this.message, this.second, secondName, this.first, this.battlefield)
             if (this.first.currentHp > 0 && this.second.currentHp > 0) {
+                if (this.battlefield.rewind === true) {
+                    this.causeRewind()
+                }
                 setTimeout(() => { this.playerTurn() }, 1000)
             } else {
-                this.message.channel.send("Match over!")
-                await renderBattle(this.message, this.first, this.second, this.battlefield.background)
-                await updatePlayer(this.message, this.battlefield.player1, this.first, this.second, false, 2, 3)
+                 
+                    this.message.channel.send("Match over!")
+                    await renderBattle(this.message, this.first, this.second, this.battlefield.background)
+                    await updatePlayer(this.message, this.battlefield.player1, this.first, this.second, false, 2, 3)
+                
             }
         } else if (this.second.status.stun.active === true) {
             this.message.channel.send(`${secondName} is stunned they can not move!`)
-            await statusCheck(this.message, this.second, secondName, this.first)
-            setTimeout(() => { this.playerTurn() }, 1000)
+            await statusCheck(this.message, this.second, secondName, this.first, this.battlefield)
+            if (this.first.currentHp > 0 && this.second.currentHp > 0) {
+                if (this.battlefield.rewind === true) {
+                    this.causeRewind()
+                }
+                setTimeout(() => { this.playerTurn() }, 1000)
+            } else {
+                 
+                    this.message.channel.send("Match over!")
+                    await renderBattle(this.message, this.first, this.second, this.battlefield.background)
+                    await updatePlayer(this.message, this.battlefield.player1, this.first, this.second, false, 2, 3)
+                
+            }
         } else {
             if (this.second.status.confusion.active === true) {
                 let confuse = Math.floor(Math.random() * 2);
                 if (confuse === 0) {
                     this.message.channel.send('Enemy attacks!')
-                    this.first.takeAttackDammage = [this.second.inflictDammage, this.message, false]
-                    await statusCheck(this.message, this.second, secondName, this.first)                    
+                    let dmg = await this.first.takeAttackDammage([this.second.inflictDammage, this.message, false])
+                    this.message.channel.send(`Dealt ${dmg} damage`)
+                    if (this.second.passive[0] == "Sadist") {
+                        this.second.buffStrength(dmg * 0.15)
+                    }
+                    await statusCheck(this.message, this.second, secondName, this.first, this.battlefield)                    
                     if (this.first.currentHp > 0 && this.second.currentHp > 0) {
+                        if (this.battlefield.rewind === true) {
+                            this.causeRewind()
+                        }
                         setTimeout(() => { this.playerTurn() }, 1000)
                     } else {
-                        this.message.channel.send("Match over!")
-                        await renderBattle(this.message, this.first, this.second, this.battlefield.background)
-                        await updatePlayer(this.message, this.battlefield.player1, this.first, this.second, false, 2, 3)
+                        
+                            this.message.channel.send("Match over!")
+                            await renderBattle(this.message, this.first, this.second, this.battlefield.background)
+                            await updatePlayer(this.message, this.battlefield.player1, this.first, this.second, false, 2, 3)
+                        
                     }
 
 
                 } else {
                     // confusion triggers servant hits themselves
                     this.message.channel.send('Enemy attacks!')
-                    this.second.takeAttackDammage = [this.second.inflictDammage, this.message, false]
+                    let dmg = await this.second.takeAttackDammage([this.second.inflictDammage, this.message, false])
+                    this.message.channel.send(`Dealt ${dmg} damage`)
                     this.message.channel.send(`${secondName} got hurt in their confusion!`)
-                    await statusCheck(this.message, this.second, secondName, this.first)
+                    await statusCheck(this.message, this.second, secondName, this.first, this.battlefield)
                     if (this.first.currentHp > 0 && this.second.currentHp > 0) {
+                        if (this.battlefield.rewind === true) {
+                            this.causeRewind()
+                        }
                         setTimeout(() => { this.playerTurn() }, 1000)
                     } else {
-                        this.message.channel.send("Match over!")
-                        await renderBattle(this.message, this.first, this.second, this.battlefield.background)
-                        await updatePlayer(this.message, this.battlefield.player1, this.first, this.second, false, 2, 3)
+                         
+                            this.message.channel.send("Match over!")
+                            await renderBattle(this.message, this.first, this.second, this.battlefield.background)
+                            await updatePlayer(this.message, this.battlefield.player1, this.first, this.second, false, 2, 3)
+                        
                     }
                 }
             } else {
                 this.message.channel.send('Enemy attacks!')
-                this.first.takeAttackDammage = [this.second.inflictDammage, this.message, false]
-                await statusCheck(this.message, this.second, secondName, this.first)
+                let dmg = await this.first.takeAttackDammage([this.second.inflictDammage, this.message, false])
+                this.message.channel.send(`Dealt ${dmg} damage`)
+                if (this.second.passive[0] == "Sadist") {
+                    this.second.buffStrength(dmg * 0.15)
+                }
+                await statusCheck(this.message, this.second, secondName, this.first, this.battlefield)
                 if (this.first.currentHp > 0 && this.second.currentHp > 0) {
+                    if (this.battlefield.rewind === true) {
+                        this.causeRewind()
+                    }
                     setTimeout(() => { this.playerTurn() }, 1000)
                 } else {
-                    this.message.channel.send("Match over!")
-                    await renderBattle(this.message, this.first, this.second, this.battlefield.background)
-                    await updatePlayer(this.message, this.battlefield.player1, this.first, this.second, false, 2, 3)
+                     
+                        this.message.channel.send("Match over!")
+                        await renderBattle(this.message, this.first, this.second, this.battlefield.background)
+                        await updatePlayer(this.message, this.battlefield.player1, this.first, this.second, false, 2, 3)
+                    
                 }
             }
         }

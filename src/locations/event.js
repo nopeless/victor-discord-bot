@@ -12,15 +12,15 @@ const prefix = auth.prefix
 
 
 const event = (message, user, client) => {
-    const remainingTime = formatDistanceToNow(1608502136977+ 864000000, { addSuffix: false }, { includeSeconds: true })
+    const remainingTime = formatDistanceToNow(1628642138277 + 1510000000, { addSuffix: false }, { includeSeconds: true })
     const exampleEmbed = new Discord.MessageEmbed()
         .setColor('#800b03')
-        .setAuthor('Santa Artoria Alter', 'https://i.imgur.com/i22Cqky.png')
-        .setDescription(`Were you good this year, or do you require punishment?.\nRemaining time: **${remainingTime}**`)
-        .setThumbnail('https://i.imgur.com/fXLupUP.png')
+        .setAuthor('Ishtar', 'https://i.imgur.com/SmmPecr.jpg')
+        .setDescription(`Let's make this summer an unforgettable one\nRemaining time: **${remainingTime}**`)
+        .setThumbnail('https://i.imgur.com/6GWwcBH.png')
         .addField('1.', 'Event Gacha (Cost: 10000 QP)', true)
         .addField('2.', 'Display Event Gacha Details', true)
-        .addField('3.', 'Deliver christmas presents with Santa (exp x3 for Rider Class servants)', true)
+        .addField('3.', 'Summer Race (exp x3 for Summer servants)', true)
         .setFooter('f/(1-3) to choose; f/cancel to cancel')
     message.channel.send(exampleEmbed)
 
@@ -51,7 +51,8 @@ const event = (message, user, client) => {
                 const exampleEmbed = new Discord.MessageEmbed()
                     .setColor('#800b03')
                     // .setDescription('Available Servants:\n\n**Arcueid Brunestud**\n**Ciel**\n**Tohno Shiki**\n**Nrvnqsr Chaos**\n**Tohno Akiha**\nIllyasviel von Einzbern (Kaleid)\nVlad III\nKing Hassan\nDio\nRyogi Shiki\nEsdeath\nGoblin Slayer\nAtalanta (Alter)\nMadara\n\nDrop rates are equal for each character.')
-                    .setDescription('Available Servants:\n\n**Santa Artoria Alter**\n**Megumin (Lancer)**\n**Aqua (Temptress)**\nDarkness\nSatou Kazuma\nAltair\nBlitz Talker\nNursery Rhyme\nPriestess\nIskandar\nAlma Tandoji\nIvan the Terrible\nAsuka Langley Soryu\nSuzaku Kururugi\n\nDrop rates are equal for each character.')
+                    //.setDescription('Available Servants:\n\n**Santa Artoria Alter**\n**Megumin (Lancer)**\n**Aqua (Temptress)**\nDarkness\nSatou Kazuma\nAltair\nBlitz Talker\nNursery Rhyme\nPriestess\nIskandar\nAlma Tandoji\nIvan the Terrible\nAsuka Langley Soryu\nSuzaku Kururugi\n\nDrop rates are equal for each character.')
+                    .setDescription('Available Servants:\n\n**nero claudius (caster)**\n**maid alter**\n**oda nobunaga (berserker)**\n**ishtar (rider)**\n**darkness (saber)**\n**maple (rider)**\n**sinon (ruler)**\n**renji abarai (lancer)**\n**revy (archer)**\nartoria pendragon (archer)\nmordred (rider)\ntamamo no mae (lancer)\nscathach (assassin)\nsuzaku kururugi (berserker)\nmisaka mikoto (caster)\nesdeath (temptress)\numi sonoda (assassin)')
                 message.channel.send(exampleEmbed)
                 break;
             case '3':
@@ -60,7 +61,7 @@ const event = (message, user, client) => {
 
                 // beach training
                 const ID = user.servants[0].id
-                if (characters[ID].class === "Rider"){
+                if (characters[ID].traits.includes("summer")){
                     await characterExpGain(message, 900);
                     await useAp(message);
                     message.channel.send('+900 Exp')

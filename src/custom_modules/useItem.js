@@ -6,7 +6,9 @@ const useItem = (servant, enemy, player, message, input) => {
         case 50://hp potion
             servant.heal(300)
             message.channel.send('Hp restored +300')
-            if (item.quantity === 1) {
+            if (servant.passive[0] == "Transport Card"){
+
+            }else if (item.quantity === 1) {
                 player.inventory.splice(input, 1)
             } else {
                 item.quantity -= 1
@@ -20,7 +22,9 @@ const useItem = (servant, enemy, player, message, input) => {
                 player.currentMana += 200
             }
             message.channel.send('Mp restored +200')
-            if (item.quantity === 1) {
+            if (servant.passive[0] == "Transport Card") {
+
+            }else if (item.quantity === 1) {
                 player.inventory.splice(input, 1)
             } else {
                 item.quantity -= 1

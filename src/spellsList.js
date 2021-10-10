@@ -199,7 +199,7 @@ const spells = [
         level: 1,
         exp: 0,
         qpCost: 10000,
-        description: "Deals damage based on master magic stat.",
+        description: "Deals damage",
         power: 10,
         manaNeeded: 50,
         spellType: 'damage',
@@ -213,7 +213,7 @@ const spells = [
         level: 1,
         exp: 0,
         qpCost: 15000,
-        description: "Restores servant's hp based on master magic stat.",
+        description: "Restores servant's hp",
         power: 10,
         manaNeeded: 50,
         spellType: 'heal',
@@ -246,7 +246,7 @@ const runes = [
         level: 1,
         exp: 0,
         qpCost: 60000,
-        description: "Rune - heals your servant. Amount based on master magic stat.",
+        description: "Rune - heals your servant",
         power: 50,
         manaNeeded: 120,
         spellType: 'heal',
@@ -474,7 +474,7 @@ const sacraments = [
         level: 1,
         exp: 0,
         qpCost: 70000,
-        description: "Greatly restores servant's hp based on master magic stat.",
+        description: "Greatly restores servant's hp",
         power: 100,
         manaNeeded: 150,
         spellType: 'heal',
@@ -488,7 +488,7 @@ const sacraments = [
         level: 1,
         exp: 0,
         qpCost: 25000,
-        description: "Curse curing incantation teached by the Holy Church",
+        description: "Curse curing incantation taught by the Holy Church",
         power: 0,
         manaNeeded: 200,
         spellType: 'cureCurse',
@@ -502,7 +502,7 @@ const sacraments = [
         level: 1,
         exp: 0,
         qpCost: 20000,
-        description: "Incantation teached by the Holy Church that increases luck.",
+        description: "Incantation taught by the Holy Church that increases luck.",
         power: 50,
         manaNeeded: 100,
         spellType: 'buffLuck',
@@ -516,7 +516,7 @@ const sacraments = [
         level: 1,
         exp: 0,
         qpCost: 70000,
-        description: "Master throws Black Key at the ennemy dealing damage based on master's magic stat.",
+        description: "Master throws Black Key at the enemy dealing damage",
         power: 50,
         manaNeeded: 120,
         spellType: 'damage',
@@ -530,7 +530,7 @@ const sacraments = [
         level: 1,
         exp: 0,
         qpCost: 45000,
-        description: "Envelopes your servant body in bright light which acts as armor making it more resistant to enemy attacks. Raises your servant's deffence.",
+        description: "Envelopes your servant body in bright light which acts as armor making it more resistant to enemy attacks. Raises your servant's defence.",
         power: 50,
         manaNeeded: 50,
         spellType: 'buffDefence',
@@ -797,7 +797,7 @@ const specialSpells = [
         target: 'self'
     },
 
-    // add reality marble diffrent scenery and effect based on alignment
+    // add reality marble different scenery and effect based on alignment
 ]
 
 module.exports = {

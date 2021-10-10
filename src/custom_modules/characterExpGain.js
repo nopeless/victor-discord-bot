@@ -1,15 +1,13 @@
 const Server = require('../models/Server')
 const characters = require("../charactersList");
 const {MessageEmbed} = require('discord.js');
+const getUser = require("./getUser")
+const saveUser = require("./saveUser")
 
 async function characterExpGain ( message, expAmount) {
-    Server.findOne({ serverID: message.guild.id }, async (err, server) => {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            const getIndex = server.playersMap.get(message.author.id)
-            let user = await server.players[getIndex]
+    let data = await getUser(message);
+    let [playersMap, user] = [data[0].playersMap, data[0].players[0]]
+    const getIndex = playersMap.get(message.author.id)
             if (user && user !== undefined) {
                 if(user.servants[0].level < 100){
                     let name = message.author.username
@@ -30,59 +28,23 @@ async function characterExpGain ( message, expAmount) {
                         user.servants[0].statsPoints += 1
 
                         query = { [`players.${getIndex}.servants.0`]: user.servants[0] };
-                        Server.updateOne({ serverID: message.guild.id },
-                            {
-                                $set: query
-                            }, async (err) => {
-                                if (err) {
-                                    console.log(err);
-                                } else {
-                                    let ID = user.servants[0].id
-                                    const emb = new MessageEmbed()
-                                        .setColor('#800b03')
-                                        .setDescription(`Congratulations **${name}** your **${characters[ID].class}** reached **Lv. ${lvl + 1}**!`)
-                                        .setThumbnail(characters[ID].pictures[1])
-                                    message.channel.send(emb)
-                                }
-                            }).lean()
+                        saveUser(message, query)
+                        let ID = user.servants[0].id
+                        const emb = new MessageEmbed()
+                            .setColor('#800b03')
+                            .setDescription(`Congratulations **${name}** your **${characters[ID].class}** reached **Lv. ${lvl + 1}**!`)
+                            .setThumbnail(characters[ID].pictures[1])
+                        message.channel.send(emb)
 
                     } else{
                         query = { [`players.${getIndex}.servants.0.exp`] : exp };
-                        Server.updateOne({ serverID: message.guild.id },
-                            {
-                                $set: query
-                            }, async (err) => {
-                                if (err) {console.log(err);}
-                            }
-                        ).lean()
+                        saveUser(message, query)
                     }
-
-                    // await server.save(async function (err) {
-                    //     if (err) {
-                    //         console.log(err);
-                    //         characterExpGain(message, expAmount)
-                    //     } else {
-                    //         if (exp >= Math.floor(lvl ** 1.5 * 100)) {
-                    //             let ID = user.servants[0].id
-                    //             const emb = new MessageEmbed()
-                    //                 .setColor('#800b03')
-                    //                 .setDescription(`Congratulations **${name}** your **${characters[ID].class}** reached **Lv. ${lvl + 1}**!`)
-                    //                 .setThumbnail(characters[ID].pictures[1])
-                    //             message.channel.send(emb)
-                    //         }
-                    //     }
-                    // })
-
-                    
+        
                 }
                 
             }
 
         }
-    }
-    )
-
-    
-}
 
 module.exports = characterExpGain;

@@ -1,15 +1,17 @@
 const Server = require("../models/Server");
 const { MessageEmbed, MessageAttachment } = require('discord.js');
-
+//Server.findOne({ serverID: message.guild.id }, async (err, server) => {
 
 const profile = (message) => {
-    Server.findOne({ serverID: message.guild.id }, async (err, server) => {
+
+    Server.find({ serverID: message.guild.id }, { players: { "$elemMatch": { playerID: message.author.id } } }, async (err, server) => {
         if (err) {
             console.log(err);
         }
         else {
             
-            let user = await server.players[server.playersMap.get(message.author.id)]
+            // let user = await server.players[server.playersMap.get(message.author.id)]
+            let user = server[0].players[0]
             if (user && user !== undefined){
                 let alignment = ''
                 let ethics = user.ethics

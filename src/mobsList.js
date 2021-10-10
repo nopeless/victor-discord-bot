@@ -20,6 +20,8 @@ const mobsList = [
             luck: 35
         },
         statsPoints: 0,
+        passive: ["-", "-"],
+        drops: [],
         NPLevel: 1,
         noblePhantasm: {
             name: 'Explode',
@@ -28,43 +30,7 @@ const mobsList = [
             text: [''],
             image: "",
             canBeUsed: false
-        },
-        status: {
-            burn: {//reduce str -30% and hp-5%ofmaxhp per turn
-                active: false,
-                duration: 0
-            },
-            curse: {//reduce luck -30% and hp-5%ofmaxhp per turn
-                active: false,
-                duration: 0
-            },
-            stun: {// servant can't take action
-                active: false,
-                duration: 0
-            },
-            freeze: {//reduce agility -30% and hp-5%ofmaxhp per turn
-                active: false,
-                duration: 0
-            },
-            npSeal: {// servant can't use theirs NP
-                active: false,
-                duration: 0
-            },
-            confusion: {// 50%chance of dealing 50% of your str stat to yourself
-                active: false,
-                duration: 0
-            },
-            fear: { //reduce magic - 30%
-                active: false,
-                duration: 0
-            },
-            poison: {// hp-10%ofmaxhp per turn
-                active: false,
-                duration: 0
-            }
-
         }
-
     },
 
     {
@@ -87,6 +53,8 @@ const mobsList = [
             luck: 30
         },
         statsPoints: 0,
+        passive: ["-", "-"],
+        drops: [],
         NPLevel: 1,
         noblePhantasm: {
             name: 'Weapon Swing',
@@ -95,43 +63,7 @@ const mobsList = [
             text: [''],
             image: "",
             canBeUsed: false
-        },
-        status: {
-            burn: {//reduce str -30% and hp-5%ofmaxhp per turn
-                active: false,
-                duration: 0
-            },
-            curse: {//reduce luck -30% and hp-5%ofmaxhp per turn
-                active: false,
-                duration: 0
-            },
-            stun: {// servant can't take action
-                active: false,
-                duration: 0
-            },
-            freeze: {//reduce agility -30% and hp-5%ofmaxhp per turn
-                active: false,
-                duration: 0
-            },
-            npSeal: {// servant can't use theirs NP
-                active: false,
-                duration: 0
-            },
-            confusion: {// 50%chance of dealing 50% of your str stat to yourself
-                active: false,
-                duration: 0
-            },
-            fear: { //reduce magic - 30%
-                active: false,
-                duration: 0
-            },
-            poison: {// hp-10%ofmaxhp per turn
-                active: false,
-                duration: 0
-            }
-
         }
-
     },
 
     {
@@ -154,6 +86,8 @@ const mobsList = [
             luck: 30
         },
         statsPoints: 0,
+        passive: ["-", "-"],
+        drops: [],
         NPLevel: 1,
         noblePhantasm: {
             name: 'Sand Coffin',
@@ -162,43 +96,7 @@ const mobsList = [
             text: [''],
             image: "",
             canBeUsed: false
-        },
-        status: {
-            burn: {//reduce str -30% and hp-5%ofmaxhp per turn
-                active: false,
-                duration: 0
-            },
-            curse: {//reduce luck -30% and hp-5%ofmaxhp per turn
-                active: false,
-                duration: 0
-            },
-            stun: {// servant can't take action
-                active: false,
-                duration: 0
-            },
-            freeze: {//reduce agility -30% and hp-5%ofmaxhp per turn
-                active: false,
-                duration: 0
-            },
-            npSeal: {// servant can't use theirs NP
-                active: false,
-                duration: 0
-            },
-            confusion: {// 50%chance of dealing 50% of your str stat to yourself
-                active: false,
-                duration: 0
-            },
-            fear: { //reduce magic - 30%
-                active: false,
-                duration: 0
-            },
-            poison: {// hp-10%ofmaxhp per turn
-                active: false,
-                duration: 0
-            }
-
         }
-
     },
 
     {
@@ -221,6 +119,8 @@ const mobsList = [
             luck: 45
         },
         statsPoints: 0,
+        passive: ["-", "-"],
+        drops: [],
         NPLevel: 1,
         noblePhantasm: {
             name: 'Shock',
@@ -229,44 +129,8 @@ const mobsList = [
             text: [''],
             image: "",
             canBeUsed: false
-        },
-        status: {
-            burn: {//reduce str -30% and hp-5%ofmaxhp per turn
-                active: false,
-                duration: 0
-            },
-            curse: {//reduce luck -30% and hp-5%ofmaxhp per turn
-                active: false,
-                duration: 0
-            },
-            stun: {// servant can't take action
-                active: false,
-                duration: 0
-            },
-            freeze: {//reduce agility -30% and hp-5%ofmaxhp per turn
-                active: false,
-                duration: 0
-            },
-            npSeal: {// servant can't use theirs NP
-                active: false,
-                duration: 0
-            },
-            confusion: {// 50%chance of dealing 50% of your str stat to yourself
-                active: false,
-                duration: 0
-            },
-            fear: { //reduce magic - 30%
-                active: false,
-                duration: 0
-            },
-            poison: {// hp-10%ofmaxhp per turn
-                active: false,
-                duration: 0
-            }
-
         }
-
-    },
+     },
 
     {
         id: 4,
@@ -288,6 +152,8 @@ const mobsList = [
             luck: 30
         },
         statsPoints: 0,
+        passive: ["-", "-"],
+        drops: [],
         NPLevel: 1,
         noblePhantasm: {
             name: 'Flame Charge',
@@ -296,41 +162,6 @@ const mobsList = [
             text: [''],
             image: "",
             canBeUsed: false
-        },
-        status: {
-            burn: {//reduce str -30% and hp-5%ofmaxhp per turn
-                active: false,
-                duration: 0
-            },
-            curse: {//reduce luck -30% and hp-5%ofmaxhp per turn
-                active: false,
-                duration: 0
-            },
-            stun: {// servant can't take action
-                active: false,
-                duration: 0
-            },
-            freeze: {//reduce agility -30% and hp-5%ofmaxhp per turn
-                active: false,
-                duration: 0
-            },
-            npSeal: {// servant can't use theirs NP
-                active: false,
-                duration: 0
-            },
-            confusion: {// 50%chance of dealing 50% of your str stat to yourself
-                active: false,
-                duration: 0
-            },
-            fear: { //reduce magic - 30%
-                active: false,
-                duration: 0
-            },
-            poison: {// hp-10%ofmaxhp per turn
-                active: false,
-                duration: 0
-            }
-
         }
     },
 
@@ -354,6 +185,8 @@ const mobsList = [
             luck: 45
         },
         statsPoints: 0,
+        passive: ["-", "-"],
+        drops: [],
         NPLevel: 1,
         noblePhantasm: {
             name: 'Poisonous Needle',
@@ -362,44 +195,240 @@ const mobsList = [
             text: [''],
             image: "",
             canBeUsed: false
-        },
-        status: {
-            burn: {//reduce str -30% and hp-5%ofmaxhp per turn
-                active: false,
-                duration: 0
-            },
-            curse: {//reduce luck -30% and hp-5%ofmaxhp per turn
-                active: false,
-                duration: 0
-            },
-            stun: {// servant can't take action
-                active: false,
-                duration: 0
-            },
-            freeze: {//reduce agility -30% and hp-5%ofmaxhp per turn
-                active: false,
-                duration: 0
-            },
-            npSeal: {// servant can't use theirs NP
-                active: false,
-                duration: 0
-            },
-            confusion: {// 50%chance of dealing 50% of your str stat to yourself
-                active: false,
-                duration: 0
-            },
-            fear: { //reduce magic - 30%
-                active: false,
-                duration: 0
-            },
-            poison: {// hp-10%ofmaxhp per turn
-                active: false,
-                duration: 0
-            }
-
         }
-
     },
+
+    {
+        id: 6,
+        name: ['kuwagamon'],
+        class: 'Enemy',
+        pictures: ["", "https://i.imgur.com/7qzyRWJ.png", "https://i.imgur.com/7qzyRWJ.png"],
+        alignment: ["Neutral", "Neutral"],
+        traits: ["male"],
+        about: "",
+        level: 1,
+        exp: 0,
+        currentHp: 300,
+        maxHp: 300,
+        stats: {
+            strength: 25,
+            endurance: 30,
+            agility: 40,
+            magic: 20,
+            luck: 15
+        },
+        statsPoints: 0,
+        passive: ["-", "-"],
+        drops: [],
+        NPLevel: 1,
+        noblePhantasm: {
+            name: 'Power Guillotine',
+            power: 50,
+            description: '',
+            text: [''],
+            image: "",
+            canBeUsed: false
+        }
+    },
+
+    {
+        id: 7,
+        name: ['golbat'],
+        class: 'Enemy',
+        pictures: ["", "https://i.imgur.com/ycNOzTL.png", "https://i.imgur.com/ycNOzTL.png"],
+        alignment: ["Neutral", "Neutral"],
+        traits: ["male"],
+        about: "",
+        level: 1,
+        exp: 0,
+        currentHp: 150,
+        maxHp: 150,
+        stats: {
+            strength: 20,
+            endurance: 15,
+            agility: 45,
+            magic: 20,
+            luck: 50
+        },
+        statsPoints: 0,
+        passive: ["-", "-"],
+        drops: [],
+        NPLevel: 1,
+        noblePhantasm: {
+            name: 'Wing Attack',
+            power: 50,
+            description: '',
+            text: [''],
+            image: "",
+            canBeUsed: false
+        }
+    },
+
+    {
+        id: 8,
+        name: ['hollow', 'fishbone d', 'fishbone'],
+        class: 'Enemy',
+        pictures: ["", "https://i.imgur.com/V6KTJeO.png", "https://i.imgur.com/V6KTJeO.png"],
+        alignment: ["Neutral", "Neutral"],
+        traits: ["male"],
+        about: "",
+        level: 1,
+        exp: 0,
+        currentHp: 450,
+        maxHp: 450,
+        stats: {
+            strength: 40,
+            endurance: 45,
+            agility: 15,
+            magic: 20,
+            luck: 20
+        },
+        statsPoints: 0,
+        passive: ["-", "-"],
+        drops: [],
+        NPLevel: 1,
+        noblePhantasm: {
+            name: 'Cero',
+            power: 50,
+            description: '',
+            text: [''],
+            image: "",
+            canBeUsed: false
+        }
+    },
+
+    {
+        id: 9,
+        name: ['kuriboh'],
+        class: 'Enemy',
+        pictures: ["", "https://i.imgur.com/0yx1DqX.png", "https://i.imgur.com/0yx1DqX.png"],
+        alignment: ["Neutral", "Neutral"],
+        traits: ["male"],
+        about: "",
+        level: 1,
+        exp: 0,
+        currentHp: 100,
+        maxHp: 100,
+        stats: {
+            strength: 10,
+            endurance: 10,
+            agility: 20,
+            magic: 25,
+            luck: 50
+        },
+        statsPoints: 0,
+        passive: ["-", "-"],
+        drops: [],
+        NPLevel: 1,
+        noblePhantasm: {
+            name: 'Lucky Roll',
+            power: 50,
+            description: '',
+            text: [''],
+            image: "",
+            canBeUsed: false
+        }
+    },
+
+    {
+        id: 10,
+        name: ['goomba'],
+        class: 'Enemy',
+        pictures: ["", "https://i.imgur.com/P1ZZdqy.png", "https://i.imgur.com/P1ZZdqy.png"],
+        alignment: ["Neutral", "Neutral"],
+        traits: ["female"],
+        about: "",
+        level: 1,
+        exp: 0,
+        currentHp: 100,
+        maxHp: 100,
+        stats: {
+            strength: 20,
+            endurance: 10,
+            agility: 40,
+            magic: 25,
+            luck: 10
+        },
+        statsPoints: 0,
+        passive: ["-", "-"],
+        drops: [],
+        NPLevel: 1,
+        noblePhantasm: {
+            name: 'Charge Forward',
+            power: 50,
+            description: '',
+            text: [''],
+            image: "",
+            canBeUsed: false
+        }
+    },
+
+    {
+        id: 11,
+        name: ['oni'],
+        class: 'Enemy',
+        pictures: ["", "https://i.imgur.com/AkVAxAK.png", "https://i.imgur.com/AkVAxAK.png"],
+        alignment: ["Neutral", "Neutral"],
+        traits: ["male"],
+        about: "",
+        level: 1,
+        exp: 0,
+        currentHp: 300,
+        maxHp: 300,
+        stats: {
+            strength: 30,
+            endurance: 30,
+            agility: 20,
+            magic: 20,
+            luck: 20
+        },
+        statsPoints: 0,
+        passive: ["-", "-"],
+        drops: [],
+        NPLevel: 1,
+        noblePhantasm: {
+            name: 'Axe Slash',
+            power: 50,
+            description: '',
+            text: [''],
+            image: "",
+            canBeUsed: false
+        }
+    },
+
+    {
+        id: 12,
+        name: ['misaka', 'misaka clone', 'sister', 'misaka sister', 'mikoto'],
+        class: 'Enemy',
+        pictures: ["", "https://i.imgur.com/034GY02.png", "https://i.imgur.com/034GY02.png"],
+        alignment: ["Neutral", "Neutral"],
+        traits: ["male"],
+        about: "",
+        level: 1,
+        exp: 0,
+        currentHp: 300,
+        maxHp: 300,
+        stats: {
+            strength: 20,
+            endurance: 30,
+            agility: 30,
+            magic: 30,
+            luck: 10
+        },
+        statsPoints: 0,
+        passive: ["-", "-"],
+        drops: [],
+        NPLevel: 1,
+        noblePhantasm: {
+            name: 'Electric Charge',
+            power: 50,
+            description: '',
+            text: [''],
+            image: "",
+            canBeUsed: false
+        }
+    },
+
 ]
 
 module.exports = mobsList;

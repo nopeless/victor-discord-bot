@@ -1,7 +1,6 @@
 const { MessageEmbed} = require('discord.js');
 
 const help = async (message) => {
-    message.react("📩")
     const embed = new MessageEmbed()
         // Set the title of the field
         .setTitle('RinBot commands:\n')
@@ -16,17 +15,17 @@ const help = async (message) => {
             **f/servants** - display servants you own\n
             **f/inventory** - display inventory\n
             **f/select (number)** - select currently active servant\n
-            **f/info** - display informations about currently active servant\n
+            **f/info** - display information about currently active servant\n
             **f/profile** - display master's profile\n
             **f/wish** - make your wish\n
             **f/masteradd (parameter) (number of stat points to distribute)** - distribute master stat points gained upon leveling up\n
             **f/servantadd (parameter) (number of stat points to distribute)** - distribute currently active servant stat points gained upon leveling up\n
-            **f/iteminfo (item name)** - display informations about specific item\n
-            **f/spellinfo (spell name)** - display informations about specific spell\n
+            **f/iteminfo (item name)** - display information about specific item\n
+            **f/spellinfo (spell name)** - display information about specific spell\n
             **f/richest** - display richest players on the server\n
             **f/highestlvl** - display highest lvl players on the server\n
-            **f/leaderboard** - display top players on the server with the highest ammount of total Batle Points\n
-            **f/ahgwinfo** - display informations about ongoing Anime Holy Grail War\n
+            **f/leaderboard** - display top players on the server with the highest amount of total Battle Points\n
+            **f/ahgwinfo** - display information about ongoing Anime Holy Grail War\n
             **f/daily** - claim your daily QP reward\n
             **f/ahgwstart** - begin the series of Anime Holy Grail Wars (results of AHGW will be announced in the channel where this command has been used, command is restricted to Moderators only)\n
             **f/wishesgranted** - display master wishes that had been granted\n
@@ -49,7 +48,7 @@ const help = async (message) => {
             **f/donate** - support the bot\n
             **f/ping** - display the bot's ping to Discord\n
             **f/deleteserver** - permanently delete all Server data\n
-            **f/deleteplayer** - delete player data on this server
+            **f/guide** - guide for new players
             `);
 
     message.channel.send(embed)

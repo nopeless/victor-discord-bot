@@ -6,7 +6,7 @@ const blockAction = async(message, fighter1Id, fighter2Id)=>{
             console.log(err);
         }
         else {
-            const player1 = await await server.players[server.playersMap.get(fighter1Id)]
+            const player1 = await server.players[server.playersMap.get(fighter1Id)]
             player1.isFighting = true
 
             if(fighter2Id){

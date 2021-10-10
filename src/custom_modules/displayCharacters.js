@@ -1,15 +1,11 @@
 const { MessageEmbed } = require('discord.js');
 const Server = require('../models/Server');
 const characters = require("../charactersList");
+const getUser = require("./getUser")
 
-
-const displayCharacters = ( message, client) => {
-    Server.findOne({ serverID: message.guild.id }, async (err, server) => {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            let user = await server.players[server.playersMap.get(message.author.id)]// async/await or something?
+const displayCharacters = async ( message, client) => {
+    let data = await getUser(message);
+    let user = data[0].players[0]
             if (user && user !== undefined) {
                 
                 if (user.servants.length != 0) {
@@ -23,6 +19,7 @@ const displayCharacters = ( message, client) => {
                         .setImage(characters[ID].pictures[1])
                         .setDescription(`Noble Phantasm: **${characters[ID].noblePhantasm.name} (Lvl.${user.servants[index].NPLevel})**`)
                         .setThumbnail(characters[ID].pictures[0])
+                        .addField('Passive', `${characters[ID].passive[0]}`, false)
                         .addField('Level', `${user.servants[index].level}`, true)
                         .addField(`Exp:`, `${user.servants[index].exp}/${Math.floor(user.servants[index].level ** 1.5 * 100)}`, true)
                         .addField('Hp', `${Math.floor(user.servants[index].currentHp + (user.stats.endurance * 10))}/${user.servants[index].maxHp + (user.stats.endurance * 10)}`, true)
@@ -67,6 +64,7 @@ const displayCharacters = ( message, client) => {
                                     .setImage(characters[ID].pictures[1])
                                     .setDescription(`Noble Phantasm: **${characters[ID].noblePhantasm.name} (Lvl.${user.servants[index].NPLevel})**`)
                                     .setThumbnail(characters[ID].pictures[0])
+                                    .addField('Passive', `${characters[ID].passive[0]}`, false)
                                     .addField('Level', `${user.servants[index].level}`, true)
                                     .addField(`Exp:`, `${user.servants[index].exp}/${Math.floor(user.servants[index].level ** 1.5 * 100)}`, true)
                                     .addField('Hp', `${Math.floor(user.servants[index].currentHp + (user.stats.endurance * 10))}/${user.servants[index].maxHp + (user.stats.endurance * 10)}`, true)
@@ -107,6 +105,7 @@ const displayCharacters = ( message, client) => {
                                     .setImage(characters[ID].pictures[1])
                                     .setDescription(`Noble Phantasm: **${characters[ID].noblePhantasm.name} (Lvl.${user.servants[index].NPLevel})**`)
                                     .setThumbnail(characters[ID].pictures[0])
+                                    .addField('Passive', `${characters[ID].passive[0]}`, false)
                                     .addField('Level', `${user.servants[index].level}`, true)
                                     .addField(`Exp:`, `${user.servants[index].exp}/${Math.floor(user.servants[index].level ** 1.5 * 100)}`, true)
                                     .addField('Hp', `${Math.floor(user.servants[index].currentHp + (user.stats.endurance * 10))}/${user.servants[index].maxHp + (user.stats.endurance * 10)}`, true)
@@ -135,11 +134,4 @@ const displayCharacters = ( message, client) => {
                 message.channel.send('You need to register first, please use the f/register command to do that.')
             }
         }
-    })
-
-
-
-
-}
-
 module.exports = displayCharacters;

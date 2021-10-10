@@ -3,7 +3,9 @@ const banners = require("../banners");
 const characters = require("../charactersList");
 const Server = require("../models/Server");
 const { postIntroduction } = require("../dialogues/introduction");
-
+const getUser = require("./getUser")
+const saveUser = require("./saveUser");
+const user = require('../models/user');
 
 
 let values = [
@@ -132,109 +134,89 @@ async function reactions(textfile, message, client, index, func1, func2, func3, 
         
 }
 
-function modifyMorality(Server, message, number){
-    Server.findOne({ serverID: message.guild.id }, async(err, server) => {
-        if (err) {
-            console.log(err);
-        }
-        else{
-            server.players.find(player => player.playerID == message.author.id).morality += number
-            await server.save(async function (err, data) {
-                if (err) {
-                    console.log(err);
-                    modifyMorality(Server, message, number)
-                } 
-            })   
-        }
-    })
+async function modifyMorality(message, number){
+    // Server.findOne({ serverID: message.guild.id }, async(err, server) => {
+    // Server.find({ serverID: message.guild.id }, { players: { "$elemMatch": { playerID: message.author.id } } }, async (err, server) => {
+    let data = await getUser(message);
+    let [playersMap, user] = [data[0].playersMap, data[0].players[0]]
+    const getIndex = playersMap.get(message.author.id)
+    let morality = user.morality
+    morality += number
+    // server.players.find(player => player.playerID == message.author.id).morality += number
+    let query = { [`players.${getIndex}.morality`]: morality };
+    saveUser(message, query)
+    let moralName = ""
+    if (morality < 30) {
+        moralName = "Evil"
+    }
+    if (30 <= morality && morality <= 69) {
+        moralName = "Neutral"
+    }
+    if (morality > 69) {
+        moralName = "Good"
+    };
+    message.channel.send(`Your morality was altered. Current value: ${morality} [ **${moralName}** ]`)
 }
 
-function modifyEthics(Server, message, number){
-    Server.findOne({ serverID: message.guild.id }, async(err, server) => {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            server.players.find(player => player.playerID == message.author.id).ethics += number
-            await server.save(async function (err, data) {
-                if (err) {
-                    console.log(err);
-                    modifyEthics(Server, message, number)
-                }
-            })
-        }
-    })
+async function modifyEthics(message, number){
+    let data = await getUser(message);
+    let [playersMap, user] = [data[0].playersMap, data[0].players[0]]
+    const getIndex = playersMap.get(message.author.id)
+    let ethics = user.ethics
+    ethics += number
+    // server.players.find(player => player.playerID == message.author.id).morality += number
+    const query = { [`players.${getIndex}.ethics`]: ethics };
+    saveUser(message, query)
+    let ethicsName = ""
+    if (ethics < 30) {
+        ethicsName = "Chaotic"
+    }
+    if (30 <= ethics && ethics <= 69) {
+        ethicsName = "Neutral"
+    }
+    if (ethics > 69) {
+        ethicsName = "Lawful"
+    }
+    message.channel.send(`Your ethics were altered. Current value: ${ethics} [ **${ethicsName}** ]`)
 }
 
 
 async function aligmentTest( textfile, message, client, index){
-    Server.findOne({ serverID: message.guild.id }, async (err, server) => {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            let user = await server.players[server.playersMap.get(message.author.id)]
-            if(user){
+    let data = await getUser(message);
+    let [playersMap, user] = [data[0].playersMap, data[0].players[0]]
+    const getIndex = playersMap.get(message.author.id)
+            if(user && user != undefined){
                 if (user.test <= 11) {
                     if (index <= 10) {
                         user.test += 1
                         reactions(textfile, message, client, index,
-                            function () { modifyMorality(Server, message, values[index][0]); modifyEthics(Server, message, values[index][1]); aligmentTest(textfile, message, client, index += 1) },
-                            function () { modifyMorality(Server, message, values[index][2]); modifyEthics(Server, message, values[index][3]); aligmentTest(textfile, message, client, index += 1) },
-                            function () { modifyMorality(Server, message, values[index][4]); modifyEthics(Server, message, values[index][5]); aligmentTest(textfile, message, client, index += 1) },
-                            function () { modifyMorality(Server, message, values[index][6]); modifyEthics(Server, message, values[index][7]); aligmentTest(textfile, message, client, index += 1) }
+                            function () { modifyMorality(message, values[index][0]); modifyEthics(message, values[index][1]); aligmentTest(textfile, message, client, index += 1) },
+                            function () { modifyMorality(message, values[index][2]); modifyEthics(message, values[index][3]); aligmentTest(textfile, message, client, index += 1) },
+                            function () { modifyMorality(message, values[index][4]); modifyEthics(message, values[index][5]); aligmentTest(textfile, message, client, index += 1) },
+                            function () { modifyMorality(message, values[index][6]); modifyEthics(message, values[index][7]); aligmentTest(textfile, message, client, index += 1) }
                         )
-                        server.save(async function (err, data) {
-                            if (err) {
-                                console.log(err);
-                                aligmentTest(textfile, message, client, index)
-                            } else{
-                                //???
-                            }
-                        });
+                        const query = { [`players.${getIndex}.test`]: user.test };
+                        saveUser(message, query)
                     } else {
-                        
-                        Server.findOne({ serverID: message.guild.id }, async (err, server1) => {
-                            if (err) {
-                                console.log(err);
-                            }
-                            else {
-                                user = await server1.players.find(player => player.playerID == message.author.id)
-                                user.test += 1
-                                await server1.save(async function (err, data) {
-                                    if (err) {
-                                        console.log(err);
-                                        aligmentTest(textfile, message, client, index)
-                                    } else{
-                                        getAlignment(message)
-                                        say(postIntroduction, message)
-                                    }
-                                })
-                            }
-                        })
+                        user.test += 1
+                        const query2 = { [`players.${getIndex}.test`]: user.test };
+                        saveUser(message, query2)
+                        getAlignment(message)
+                        say(postIntroduction, message)
                     }
-                } else {
-                    message.channel.send("You've already taken this test before.")
-                }
-            } else{
-                message.channel.send("Please register first. (f/register)")
+                } else {message.channel.send("You've already taken this test before.") }
+            } else {message.channel.send("Please register first. (f/register)")} 
             }
-            
-            
-        }
-    })
-   
-}
 
 
-function getAlignment( message){
-    Server.findOne({ serverID: message.guild.id }, (err, server) => {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            let ethics = server.players[server.playersMap.get(message.author.id)].ethics
-            let morality = server.players[server.playersMap.get(message.author.id)].morality
+
+async function getAlignment( message){
+    let data = await getUser(message);
+    let user = data[0].players[0]
+    let ethics = user.ethics
+    let morality = user.morality
+    let ethicsName = ""
+    let moralName = ""
             if(ethics < 30){
                 ethicsName = "Chaotic"
             }
@@ -264,20 +246,14 @@ function getAlignment( message){
             }
             
         }
-    })
-}
-
 
 async function summonAlignmentBanner(message){
-
-    Server.findOne({ serverID: message.guild.id }, async (err, server) => {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            let ethics = server.players[server.playersMap.get(message.author.id)].ethics
-            let morality = server.players[server.playersMap.get(message.author.id)].morality
-            
+    let data = await getUser(message);
+    let user = data[0].players[0]
+    let ethics = user.ethics
+    let morality = user.morality
+    let ethicsName = ""
+    let moralName = ""
             if(ethics < 30){
                 ethicsName = "Chaotic"
             }
@@ -338,127 +314,66 @@ async function summonAlignmentBanner(message){
             }
             await summon(banner, message)
         }
-    })
-    
-}
 
 
-function showCommandSeals(message){
-    Server.findOne({ serverID: message.guild.id }, (err, server) => {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            let numberOfUses = server.players[server.playersMap.get(message.author.id)].commandsLeft
-            let commandSeals = server.players[server.playersMap.get(message.author.id)].commandId
+
+async function showCommandSeals(message){
+    let data = await getUser(message);
+    let user = data[0].players[0]
+            let numberOfUses = user.commandsLeft
+            let commandSeals = user.commandId
             const attachment = new MessageAttachment(`./src/commandsPictures/cs${commandSeals}_${numberOfUses}.png`, `cs${commandSeals}_${numberOfUses}.png`);
             const embed = new MessageEmbed()
                 .setColor('#800b03')
                 .setDescription(`You have **${numberOfUses}** command seals left.`)
             message.channel.send(embed)
             message.channel.send(attachment)
-        
         }
-    })
-}
 
 
 async function summon(banner, message){
     const summoned = banners[banner][Math.floor(Math.random() * banners[banner].length)];
     // console.log(servants[summoned]);// change to append to player.servants array
-    await Server.findOne({ serverID: message.guild.id }, async (err, server) => {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            const getIndex = server.playersMap.get(message.author.id)
-            let user = await server.players[getIndex]
-            let servants = user.servants
-            let servant = { ...characters[summoned]}
+    let data = await getUser(message);
+    let [playersMap, user] = [data[0].playersMap, data[0].players[0]]
+    const getIndex = playersMap.get(message.author.id)
+    let servants = user.servants
+    let servant = { ...characters[summoned]}
+    servants.push(servant)
+    let query = { [`players.${getIndex}.servants`]: servants };
+    saveUser(message, query)
+            
+    let character = characters[summoned]
+    async function summoning(character) {
+        const embed = new MessageEmbed()
+            .setDescription(`Congratulations! You have summoned **${character.class}** !`)
+            .setColor('#800b03')
+            .setImage(pickClassCard(character))
+        // .setThumbnail(character.pictures[1])
 
-            query = { [`players.${getIndex}.servants`]: servant };
-            Server.updateOne({ serverID: message.guild.id },
-                {
-                    $push: query
-                }, async (err) => {
-                    if (err) {
-                        console.log(err);
-                    } else {
-                        let character = characters[summoned]
-                        async function summoning(character) {
-                            const embed = new MessageEmbed()
-                                .setDescription(`Congratulations! You have summoned **${character.class}** !`)
-                                .setColor('#800b03')
-                                .setImage(pickClassCard(character))
-                            // .setThumbnail(character.pictures[1])
+        m = await message.channel.send(embed)
 
-                            m = await message.channel.send(embed)
-
-                            const newEmbed = new MessageEmbed()
-                                .setDescription(`Congratulations ${message.author.username}! You have summoned **${character.class}** !`)
-                                .setColor('#800b03')
-                                .setImage(character.pictures[0])
-                            // .setThumbnail(character.pictures[1])
+        const newEmbed = new MessageEmbed()
+            .setDescription(`Congratulations ${message.author.username}! You have summoned **${character.class}** !`)
+            .setColor('#800b03')
+            .setImage(character.pictures[0])
+        // .setThumbnail(character.pictures[1])
 
 
-                            var customDelay = new Promise(function (resolve) {
-                                var delay = 3000; // milliseconds
-                                var before = Date.now();
-                                while (Date.now() < before + delay) { };
-                                resolve('Success!');
-                            });
+        var customDelay = new Promise(function (resolve) {
+            var delay = 3000; // milliseconds
+            var before = Date.now();
+            while (Date.now() < before + delay) { };
+            resolve('Success!');
+        });
 
-                            customDelay.then(m.edit(newEmbed));
-
-
-                        }
-                        summoning(character);
-                    }
-                }).lean()
-
-            // servants.push(servant)
-            // await server.save(async function (err, data) {
-            //     if (err) {
-            //         console.log(err);
-            //         summon(banner, message)
-            //     } else {
-            //         let character = characters[summoned]
-            //         async function summoning(character) {
-            //             const embed = new MessageEmbed()
-            //                 .setDescription(`Congratulations! You have summoned **${character.class}** !`)
-            //                 .setColor('#800b03')
-            //                 .setImage(pickClassCard(character))
-            //             // .setThumbnail(character.pictures[1])
-
-            //             m = await message.channel.send(embed)
-
-            //             const newEmbed = new MessageEmbed()
-            //                 .setDescription(`Congratulations ${message.author.username}! You have summoned **${character.class}** !`)
-            //                 .setColor('#800b03')
-            //                 .setImage(character.pictures[0])
-            //             // .setThumbnail(character.pictures[1])
+        customDelay.then(m.edit(newEmbed));
 
 
-            //             var customDelay = new Promise(function (resolve) {
-            //                 var delay = 3000; // milliseconds
-            //                 var before = Date.now();
-            //                 while (Date.now() < before + delay) { };
-            //                 resolve('Success!');
-            //             });
-
-            //             customDelay.then(m.edit(newEmbed));
-
-
-            //         }
-            //         summoning(character);
-            //     }
-            // })
-           
-        }
     }
-    )
-    
-}
+    summoning(character);
+        }
+
 
 function pickClassCard(servant){
     if(servant.class == "Saber"){

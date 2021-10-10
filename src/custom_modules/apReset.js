@@ -25,7 +25,7 @@ async function apReset(server1) {
                 await server.save(async function (err, data) {
                     if (err) {
                         console.log(err);
-                        apReset(server1)
+                        apReset(server)
                     } else {
                         let remainingTime = server.apResetTime - Date.now()
                         if (remainingTime < 0) {

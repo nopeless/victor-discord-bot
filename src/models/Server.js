@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 var serverSchema = new mongoose.Schema({
     serverID: String,
     apResetTime: Number,
+    shadowID: Number,
     hgwChannel: String,
     hgwEndDate: Number,
     hgw: Number,

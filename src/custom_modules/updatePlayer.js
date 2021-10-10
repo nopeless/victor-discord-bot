@@ -46,7 +46,9 @@ const updatePlayer = async (message, fighter, servant, enemy, escape, multiplier
                 })
                 
             } else {
-                
+                if (servant.passive[0] == "Treasury of Babylon" || servant.passive[0] == "Golden Rule"){
+                    money = money * 2
+                }
                 // updatedMoney = player.money + money
                 player.money += money
                 player.exp += exp

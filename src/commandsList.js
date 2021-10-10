@@ -36,7 +36,22 @@ const commands = [
     ["cs34_3.png", "cs34_2.png", "cs34_1.png", "cs34_0.png"],
     ["cs35_3.png", "cs35_2.png", "cs35_1.png", "cs35_0.png"],
     ["cs36_3.png", "cs36_2.png", "cs36_1.png", "cs36_0.png"],
-    ["cs37_3.png", "cs37_2.png", "cs37_1.png", "cs37_0.png"]
+    ["cs37_3.png", "cs37_2.png", "cs37_1.png", "cs37_0.png"],
+    ["cs38_3.png", "cs38_2.png", "cs38_1.png", "cs38_0.png"],
+    ["cs39_3.png", "cs39_2.png", "cs39_1.png", "cs39_0.png"],
+    ["cs40_3.png", "cs40_2.png", "cs40_1.png", "cs40_0.png"],
+    ["cs41_3.png", "cs41_2.png", "cs41_1.png", "cs41_0.png"],
+    ["cs42_3.png", "cs42_2.png", "cs42_1.png", "cs42_0.png"],
+    ["cs43_3.png", "cs43_2.png", "cs43_1.png", "cs43_0.png"],
+    ["cs44_3.png", "cs44_2.png", "cs44_1.png", "cs44_0.png"],
+    ["cs45_3.png", "cs45_2.png", "cs45_1.png", "cs45_0.png"],
+    ["cs46_3.png", "cs46_2.png", "cs46_1.png", "cs46_0.png"],
+    ["cs47_3.png", "cs47_2.png", "cs47_1.png", "cs47_0.png"],
+    ["cs48_3.png", "cs48_2.png", "cs48_1.png", "cs48_0.png"],
+    ["cs49_3.png", "cs49_2.png", "cs49_1.png", "cs49_0.png"],
+    ["cs50_3.png", "cs50_2.png", "cs50_1.png", "cs50_0.png"],
+    ["cs51_3.png", "cs51_2.png", "cs51_1.png", "cs51_0.png"],
+    ["cs52_3.png", "cs52_2.png", "cs52_1.png", "cs52_0.png"],
 
 ]
 

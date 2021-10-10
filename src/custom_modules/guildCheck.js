@@ -13,6 +13,7 @@ const guildCheck = (client)=>{
                     const newServer = {
                         serverID: key,
                         apResetTime: Date.now() + 3600000,// 1h
+                        shadowID: 0,
                         hgwChannel: '0',
                         hgwEndDate: 0,
                         hgw: 1,

@@ -379,6 +379,20 @@ const specialSummon = async (message)=>{
                                 await summon(62, message)
 
                                 break; 
+
+                            case 'sand':
+                                message.channel.send(`Used **${player.inventory[input].name}**`)
+                                await updateInventory(message, newInventory)
+                                await summon(65, message)
+
+                                break;
+
+                            case 'coffee':
+                                message.channel.send(`Used **${player.inventory[input].name}**`)
+                                await updateInventory(message, newInventory)
+                                await summon(66, message)
+
+                                break;
                                 
                             default:
                                 const exampleEmbed = new Discord.MessageEmbed()

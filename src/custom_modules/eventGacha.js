@@ -11,7 +11,7 @@ const eventGacha = async (message) => {
             if(player.money >= 10000){
                 player.money -= 10000
                 await server.save()
-                    .then(await summon(64, message))
+                    .then(await summon(60, message))
             } else{
                 message.channel.send('Not enough QP')
             }
