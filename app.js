@@ -2,7 +2,7 @@
 const Discord = require('discord.js');
 const mongoose = require("mongoose");
 const winston = require('winston');
-const DBL = require("dblapi.js");
+// const DBL = require("dblapi.js");
 
 // required files
 const auth = require("./auth.json");
@@ -59,10 +59,10 @@ const logger = winston.createLogger({
 const token = auth.token;// discord token
 const prefix = auth.prefix;
 const mongo = auth.mongo
-const dblToken = auth.dbl
-// const webpass = auth.web
+
 let dbConnected = false
 
+// const ALL = Object.values(Discord.IntentsBitField.Flags).reduce((acc, p) => acc | p, 0);
 
 //CONFIGURATION
 const client = new Discord.Client({
@@ -73,6 +73,7 @@ const client = new Discord.Client({
     restTimeOffset: 1000,
     restRequestTimeout: 30000,
     retryLimit: 3,
+    // intents: ALL | Discord.IntentsBitField.Flags.MessageContent,
     disabledEvents: [
         , 'GUILD_ROLE_CREATE'
         , 'GUILD_ROLE_DELETE'
@@ -86,18 +87,6 @@ const client = new Discord.Client({
 });
 
 client.login(token).catch(console.error);
-
-
-// const dbl = new DBL(dblToken, { webhookAuth: webpass, webhookServer: listener, webhookPort: 5000 }, client);
-const dbl = new DBL(dblToken, client);
-// Optional dbl events
-dbl.on('posted', () => {
-    console.log('Server count posted!');
-})
-
-dbl.on('error', e => {
-    console.log(`Oops! ${e}`);
-})
 
 
 // API errors handling
@@ -131,11 +120,11 @@ client.on("ready", async() => {
             // check if all the guilds are in the database, if not, add it
             guildCheck(client)
         })
-        .then(dbConnected = true)
+        .then(() => { dbConnected = true; })
         .catch(err => {
             logger.info(`DB Connection Error: ${err.message}`);
         });
-    client.user.setActivity('F/help')
+    client.user.setActivity('nopeless is making big mone f/help')
 });
 
 
@@ -143,6 +132,7 @@ client.on("guildCreate", guild => {
     guildCreate(guild);
 });
 
+// Change this later
 client.on("message", async message => {
     if(dbConnected === true){
     // This event will run on every single message received, from any channel or DM.
