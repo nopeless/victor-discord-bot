@@ -44,14 +44,14 @@ const chooseAction = (message, client)=>{
                                             1. Church ⛪\n
                                             2. Library 📚\n
                                             3. Nurse office 💉\n
-                                            4. Alchemy workshop <:icons8testtube50:663396617520676929>\n
+                                            4. Alchemy workshop 🧪\n
                                             5. Market 🛒\n
                                             6. Undergrounds 🏚\n
                                             7. City center 🌃\n
-                                            8. Arena <:Icon_Coin_Mooncell:663389214976770049>\n
-                                            9. Gil's Shop <:grail:663138422763945985>\n
-                                            10. Chaldea <:Saintquartz:693210492818423858>\n
-                                            11. Summer Event <:darkness_embarrassed:712072695029825618>
+                                            8. Arena <:mooncell:1075439369571291248>\n
+                                            9. Gil's Shop <:holy_grail:1075439300272996382>\n
+                                            10. Chaldea  <:saint_quartz:1075438820473962619>\n
+                                            11. Summer Event <:02smug:750197775903490150>
                                                    
                                             `)
                                     // add events 11. Event <:archer_santa:586620773238571008>
