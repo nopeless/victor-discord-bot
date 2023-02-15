@@ -5,7 +5,7 @@ const prefix = auth.prefix;
 const donate = (message) => {
     const filter = m => m.content.startsWith(prefix) && m.author.id === message.author.id
     const collector1 = new MessageCollector(message.channel, filter, { time: 60000 });
-    message.channel.send('How much would you like to donate? For every **1$** donated (**not including fees**) you will receive **3 saint quartz**<:Saintquartz:693210492818423858> that can be used on any server\n(f/+amount 1-250)')
+    message.channel.send('How much would you like to donate? For every **1$** donated (**not including fees**) you will receive **3 saint quartz**<:saint_quartz:1075438820473962619> that can be used on any server\n(f/+amount 1-250)')
     collector1.on('collect', async message => {
         collector1.stop()
         let input = message.content.slice(prefix.length).trim().split(/ +/g)[0]

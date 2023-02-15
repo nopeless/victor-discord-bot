@@ -21,7 +21,7 @@ const chaldea = (message, user) => {
                 const exampleEmbed = new Discord.MessageEmbed()
                     .setColor('#185dcc')
                     .setAuthor('Gudako', 'https://i.imgur.com/yXqtsp0.jpg')
-                    .setDescription(`You came to donate to our cause? GACHA? \nSaint Quartzs: **${user1.VIPCoins}**<:Saintquartz:693210492818423858>\nTo get <:Saintquartz:693210492818423858> donate RinBot on Patreon (**f/donate**)`)//user.vipcoins
+                    .setDescription(`You came to donate to our cause? GACHA? \nSaint Quartzs: **${user1.VIPCoins}**<:saint_quartz:1075438820473962619>\nTo get <:saint_quartz:1075438820473962619> donate RinBot on Patreon (**f/donate**)`)//user.vipcoins
                     .setThumbnail('https://i.imgur.com/hdrJkQl.jpg')
                     // .addField('1.', 'Donate (for every 1$ given + fees, you will recevie 3 Saint Quartz as a gift)', true)
                     .addField('1.', 'GACHA (summon from the pool of all available servants, cost: 1 Saint Quartz)', true)
