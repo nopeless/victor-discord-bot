@@ -19,7 +19,7 @@ async function voteV2(message) {
                     }
                     else {
                         const timePast = Date.now() - user.lastApResets
-                        if (timePast >= 21600000) {
+                        if (user?.lastApResets && timePast >= 21600000) {
                             const assignAp = randomIntFromInterval(1, 5)
                             user.apResets += assignAp
                             user.lastApResets = Date.now()
