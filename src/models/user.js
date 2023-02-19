@@ -5,6 +5,6 @@ var userSchema = new mongoose.Schema({
     apResets: Number,
     VIPCoins: Number,
     FA: Number,
-    lastApResets: Date
+    lastApResets: Number
 });
 module.exports = mongoose.model("User", userSchema);
