@@ -5,6 +5,15 @@ function randomIntFromInterval(min, max) { // min and max included
     return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
+async function giveRandApResets(user, message) {
+    const assignAp = randomIntFromInterval(1, 5)
+    user.apResets += assignAp
+    user.lastApResets = Date.now()
+    await user.save().catch(console.error)
+
+    message.channel.send(`You received ${assignAp}AP Reset, You have **${user.apResets}AP Reset** in stock. Use **f/apr** to reset your AP`)
+}
+
 async function voteV2(message) {
 
     User.findOne({ userID: message.author.id }, async (err, user) => {
@@ -18,18 +27,18 @@ async function voteV2(message) {
                         console.log(err);
                     }
                     else {
-                        const timePast = Date.now() - user.lastApResets
-                        if (user?.lastApResets && timePast >= 21600000) {
-                            const assignAp = randomIntFromInterval(1, 5)
-                            user.apResets += assignAp
-                            user.lastApResets = Date.now()
-                            await user.save().catch(console.error)
-
-                            message.channel.send(`You received ${assignAp}AP Reset, You have **${user.apResets}AP Reset** in stock. Use **f/apr** to reset your AP`)
+                        if (user?.lastApResets && Date.now() - user.lastApResets >= 21600000) {
+                            return await giveRandApResets(user, message)
                         } else {
-                            const timeRemaining = user.lastApResets + 21600000
 
-                            message.channel.send(`You are on cooldown, expires: <:t${timeRemaining}:R>`)
+                            if(!user?.lastApResets) {
+                                return await giveRandApResets(user, message)
+                            } else {
+                                const timeRemaining = user.lastApResets + 21600000
+
+                                message.channel.send(`You are on cooldown, expires: <t:${parseInt(timeRemaining/1000)}:R>`)
+                            }
+                         
                         }
 
 
