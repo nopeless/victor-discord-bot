@@ -22,8 +22,8 @@ const chooseAction = (message, client)=>{
             console.log(err);
         }
         else {
-            // let user = await server.players[server.playersMap.get(message.author.id)]
-            let user = server[0].players[0]
+            let user = server.players.find(v => v.playerID === message.author.id);
+
             if (user && user !== undefined) {
                 if(user.isFighting === false){
                     if (user.currentAp > 0){
