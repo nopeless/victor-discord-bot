@@ -14,7 +14,7 @@ const Server = require('../models/Server');
 const User = require('../models/user');
 const auth = require("../../auth.json");
 const prefix = auth.prefix;
-// Server.findOne({ serverID: message.guild.id }, async(err, server) => {
+
 const chooseAction = (message, client)=>{
     
     Server.findOne({ serverID: message.guild.id }, { players: { "$elemMatch": { playerID: message.author.id } } }, async(err, server) => {
@@ -22,7 +22,7 @@ const chooseAction = (message, client)=>{
             console.log(err);
         }
         else {
-            let user = server.players.find(v => v.playerID === message.author.id);
+            let user = server?.players.find(v => v.playerID === message.author.id);
 
             if (user && user !== undefined) {
                 if(user.isFighting === false){
