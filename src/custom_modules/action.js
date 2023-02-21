@@ -17,7 +17,7 @@ const prefix = auth.prefix;
 // Server.findOne({ serverID: message.guild.id }, async(err, server) => {
 const chooseAction = (message, client)=>{
     
-    Server.find({ serverID: message.guild.id }, { players: { "$elemMatch": { playerID: message.author.id } } }, async(err, server) => {
+    Server.findOne({ serverID: message.guild.id }, { players: { "$elemMatch": { playerID: message.author.id } } }, async(err, server) => {
         if (err) {
             console.log(err);
         }
