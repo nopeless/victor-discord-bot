@@ -31,6 +31,7 @@ const displayAp = require('./src/custom_modules/displayAp');
 const apRecover = require('./src/custom_modules/apRecover');
 const displayTip = require('./src/custom_modules/tips');
 const vote = require('./src/custom_modules/vote');
+const votev2 = require('./src/custom_modules/votev2');
 const craftingGuide = require('./src/custom_modules/craftingGuide');
 const donate = require('./src/custom_modules/donate2');
 const search = require('./src/custom_modules/servantSearch');
@@ -270,7 +271,7 @@ client.on("message", async message => {
     }
 
     if (command === 'vote') {
-        vote(message)
+        votev2(message)
     }
 
     if (command === 'crafting') {
