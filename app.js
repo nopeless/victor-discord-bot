@@ -101,7 +101,9 @@ client.on('error', error => {
 });
 // others
 client.on("warn", (e) => console.warn(e));
-client.on("debug", (e) => console.info(e));
+
+// disbale debugging
+// client.on("debug", (e) => console.info(e));
 
 
 //      mongoDB connection
